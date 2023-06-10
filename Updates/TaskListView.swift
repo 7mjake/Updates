@@ -10,6 +10,42 @@ import SwiftUI
 struct TaskRow: View {
     @ObservedObject var task: Task
     @Environment(\.managedObjectContext) private var context: NSManagedObjectContext
+    @State var updateContent: String = ""
+    
+    func fetchUpdate(for task: Task, on date: Date) -> Update {
+        let fetchRequest: NSFetchRequest<Update> = Update.fetchRequest()
+        
+        // Get the start of the day for the date argument
+        let startOfDay = Calendar.current.startOfDay(for: date)
+        
+        // This predicate assumes 'date' is a Date type and 'task' is a relationship to the Task entity
+        let predicate = NSPredicate(format: "date == %@ AND task == %@", startOfDay as NSDate, task)
+        
+        fetchRequest.predicate = predicate
+        
+        do {
+            let updates = try context.fetch(fetchRequest)
+            if let update = updates.first {
+                // Return the first update if one exists
+                return update
+            }
+        } catch {
+            print("Failed to fetch Update: \(error)")
+        }
+        
+        // If no Update was found or an error occurred, create a new Update
+        let newUpdate = Update(context: context)
+        newUpdate.date = startOfDay
+        newUpdate.task = task
+        
+        do {
+            try context.save()
+        } catch {
+            print("Failed to save new Update: \(error)")
+        }
+        
+        return newUpdate
+    }
     
     var body: some View {
         VStack {
@@ -53,6 +89,11 @@ struct TaskRow: View {
                         task.checked
                     }, set: { newValue in
                         task.checked = newValue
+                        
+                        let update = Update(context: self.context)
+                        update.date = Date.now
+                        update.task = task
+                        
                         try? context.save()
                     }), label: {
                         Text(task.name ?? "error")
@@ -74,13 +115,24 @@ struct TaskRow: View {
             //Task Update Field
             if task.checked {
                 
-                @State var updateText: String = ""
-                
-                TextField("Task Update", text: $updateText, prompt: Text("Update"), axis: .vertical)
-                .onSubmit {
-                    print("Text submitted")
-                }
-                .lineLimit(2...)
+                TextField("Task Update", text: $updateContent, prompt: Text("Update"), axis: .vertical)
+                    .onAppear {
+                        let update = fetchUpdate(for: task, on: Date.now)
+                        updateContent = update.content ?? ""
+                    }
+                    .onChange(of: updateContent) { newValue in
+                        // Update the Update's content whenever updateContent changes
+                        let update = fetchUpdate(for: task, on: Date.now)
+                        update.content = newValue
+                        
+                        do {
+                            print("update saved")
+                            try context.save()
+                        } catch {
+                            print("Failed to save Update content: \(error)")
+                        }
+                    }
+                    .lineLimit(2...)
                 
             }
         }
@@ -96,6 +148,17 @@ struct TaskListView: View {
     @State var newTask = ""
     @State var newTaskComplete = false
     @State var newTaskDone = false
+    
+    func deleteAllUpdates() {
+            let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Update")
+            let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+
+            do {
+                try context.execute(deleteRequest)
+            } catch let error as NSError {
+                print("Error: \(error.domain)")
+            }
+        }
     
     @FocusState private var newTaskField: Bool
     @Environment(\.managedObjectContext) private var context: NSManagedObjectContext
@@ -172,6 +235,15 @@ struct TaskListView: View {
                 }
             }
             
+            Button(action: {
+                deleteAllUpdates()
+            }, label: {
+                Text("Delete All Updates")
+            })
+            .background(
+                            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                .fill(Color.red)
+                            )
         }
     }
     

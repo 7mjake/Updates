@@ -28,9 +28,13 @@ struct ProjectUpdateView: View {
                     Text("What did you work on today?")
                         .font(.title2)
                         .fontWeight(.medium)
+                    
                     Spacer(minLength: 8)
+                    
                     TaskListView()
+                    
                     Spacer(minLength: 24)
+                    
                     Text("Notes")
                         .font(.title2)
                         .fontWeight(.medium)
