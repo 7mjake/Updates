@@ -30,11 +30,18 @@ struct ContentView: View {
                 .environmentObject(selectedProject)
         } detail: {
             VStack (spacing: 0) {
-                CustomToolbar()
-                Divider()
+                //CustomToolbar()
+                //Divider()
                 ProjectUpdateView()
             }
         }
+        .toolbar {
+            ToolbarItem {
+                CustomToolbar()
+            }
+            
+        }
+        .navigationTitle("")
         .environmentObject(selectedProject)
     }
     

@@ -7,9 +7,91 @@
 
 import SwiftUI
 
+struct TaskRow: View {
+    @ObservedObject var task: Task
+    @Environment(\.managedObjectContext) private var context: NSManagedObjectContext
+    
+    var body: some View {
+        VStack {
+            HStack {
+                //Completed Task
+                if task.complete {
+                    Toggle(isOn: Binding(get: {
+                        task.checked
+                    }, set: { newValue in
+                        task.checked = newValue
+                        try? context.save()
+                    }), label: {
+                        Text(task.name ?? "error")
+                            .strikethrough()
+                    })
+                    .disabled(/*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
+                    
+                    Spacer()
+                    Button("Undo") {
+                        task.complete = false
+                    }
+                    .buttonStyle(.link)
+                    Button("Delete task") {
+                        context.delete(task)
+                        do {
+                            try context.save()
+                        } catch {
+                            // handle the Core Data error
+                            print("Failed to delete task: \(error)")
+                        }
+                    }
+                    .buttonStyle(.link)
+                    .foregroundColor(.red)
+                    
+                    
+                }
+                
+                //Uncompleted Task
+                else if !task.complete {
+                    Toggle(isOn: Binding(get: {
+                        task.checked
+                    }, set: { newValue in
+                        task.checked = newValue
+                        try? context.save()
+                    }), label: {
+                        Text(task.name ?? "error")
+                    })
+                    
+                    Spacer()
+                    
+                    if task.checked {
+                        Button("Mark as Complete") {
+                            task.complete = true
+                        }
+                        .buttonStyle(.link)
+                    }
+                }
+                
+                
+            }
+            
+            //Task Update Field
+            if task.checked {
+                
+                @State var updateText: String = ""
+                
+                TextField("Task Update", text: $updateText, prompt: Text("Update"), axis: .vertical)
+                .onSubmit {
+                    print("Text submitted")
+                }
+                .lineLimit(2...)
+                
+            }
+        }
+    }
+}
+
+
 struct TaskListView: View {
     
     @EnvironmentObject var selectedProject: SelectedProject
+    
     @State var addingTask = false
     @State var newTask = ""
     @State var newTaskComplete = false
@@ -17,124 +99,23 @@ struct TaskListView: View {
     
     @FocusState private var newTaskField: Bool
     @Environment(\.managedObjectContext) private var context: NSManagedObjectContext
+    @FetchRequest(
+        entity: Task.entity(),
+        sortDescriptors: [NSSortDescriptor(keyPath: \Task.dueDate, ascending: true)],
+        animation: .default)
+    private var allTasks: FetchedResults<Task>
     
-    @State private var tasks: [Task] = []
-    private func fetchTasks(for project: Project) {
-        let fetchRequest: NSFetchRequest<Task> = Task.fetchRequest()
-        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Task.dueDate, ascending: true)]
-        fetchRequest.predicate = NSPredicate(format: "project == %@", project)
-        do {
-            tasks = try context.fetch(fetchRequest)
-        } catch {
-            print ("Failed to fetch tasks: \(error)")
-        }
+    private var filteredTasks: [Task] {
+        guard let project = selectedProject.project else { return [] }
+        return allTasks.filter { $0.project == project }
     }
-    
-    func deleteAllTasks() {
-        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = Task.fetchRequest()
-
-        let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-
-        do {
-            try context.execute(batchDeleteRequest)
-//            if let project = selectedProject.project {
-//                        fetchTasks(for: project)
-//                    }
-        } catch {
-            print("Failed to delete all tasks: \(error)")
-        }
-    }
-    
-    
     
     
     var body: some View {
         VStack(alignment: .leading) {
             
-            Spacer(minLength: 16)
-            Button(action: {
-                deleteAllTasks()
-            }, label: {
-                Text("DELETE ALL TASKS")
-            })
-            Spacer(minLength: 16)
-            
-            ForEach(tasks) { task in
-                VStack {
-                    
-                    @State var localUpdate = ""
-                    
-                    HStack {
-                        
-                        //Completed Tasks
-                        if task.complete {
-                            Toggle(isOn: Binding(get: {
-                                task.checked
-                            }, set: { newValue in
-                                task.checked = newValue
-                                try? context.save()
-                            }), label: {
-                                Text(task.name ?? "error")
-                                    .strikethrough()
-                            })
-                            .disabled(/*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
-                            
-                            Spacer()
-                            Button("Undo") {
-                                task.complete = false
-                            }
-                            .buttonStyle(.link)
-                            Button("Delete task") {
-                                context.delete(task)
-                                do {
-                                    try context.save()
-                                } catch {
-                                    // handle the Core Data error
-                                    print("Failed to delete task: \(error)")
-                                }
-                            }
-                            .buttonStyle(.link)
-                            .foregroundColor(.red)
-                            
-                            
-                        }
-                        
-                        //Uncompleted Tasks
-                        else if !task.complete {
-                            Toggle(isOn: Binding(get: {
-                                task.checked
-                            }, set: { newValue in
-                                task.checked = newValue
-                                try? context.save()
-                            }), label: {
-                                Text(task.name ?? "error")
-                            })
-                            
-//                            Toggle(isOn: Binding(task.checked), label: {
-//                                Text(task.name ?? "error")
-//                            })
-                            
-                            Spacer()
-                            
-                            //Checked Tasks
-                            if task.checked {
-                                Button("Mark as Complete") {
-                                    task.complete = true
-                                }
-                                .buttonStyle(.link)
-                            }
-                        }
-                        
-                        
-                    }
-                    
-                    //Task Update Field
-                    if task.checked {
-                        TextField("Task Update", text: $localUpdate, prompt: Text("Update"),
-                                  axis: .vertical)
-                        .lineLimit(2...)
-                    }
-                }
+            ForEach(filteredTasks) { task in
+                TaskRow(task: task)
             }
             
             //Adding Tasks
@@ -177,9 +158,6 @@ struct TaskListView: View {
                         
                         do {
                             try context.save()
-                            if let project = selectedProject.project {
-                                        fetchTasks(for: project)
-                                    }
                         } catch {
                             print(error)
                         }
@@ -194,16 +172,6 @@ struct TaskListView: View {
                 }
             }
             
-        }
-        .onAppear {
-            if let project = selectedProject.project {
-                fetchTasks(for: project)
-            }
-        }
-        .onChange(of: selectedProject.project) { newProject in
-            if let newProject = newProject {
-                fetchTasks(for: newProject)
-            }
         }
     }
     

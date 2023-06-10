@@ -7,12 +7,60 @@
 
 import SwiftUI
 
+struct ProjectRow: View {
+    var project: Project
+    
+    var body: some View {
+        HStack(alignment: .center, spacing: 4) {
+            Text(project.name ?? "")
+                .font(.title2)
+            
+            Spacer()
+            Text("P" + String(project.priority))
+                .font(.body)
+                .fontWeight(.black)
+                .opacity(0.5)
+        }
+    }
+}
+
+struct projectMenu: View {
+    
+    var project: Project
+    @State var isEditProjectViewPresented = false
+    @State private var selectedEditProject: Project?
+
+    @Environment(\.managedObjectContext) private var context: NSManagedObjectContext
+
+
+    
+    var body: some View {
+        Button("􀈊 Edit project") {
+            self.selectedEditProject = project
+            isEditProjectViewPresented = true
+        }
+        .sheet(isPresented: $isEditProjectViewPresented) {
+            //EditProjectView(project: project)
+            EditProjectView()
+                .frame(minWidth: 300.0, minHeight: 300.0)
+        }
+        
+        Button("􀈑 Delete project") {
+            context.delete(project)
+                do {
+                    try context.save()
+                } catch {
+                    // handle the Core Data error
+                    print("Failed to delete task: \(error)")
+                }
+        }
+    }
+}
+
 struct ProjectsView: View {
     
     @EnvironmentObject var selectedProject: SelectedProject
     @State var isAddProjectViewPresented = false
-    @State var isEditProjectViewPresented = false
-    @State private var selectedEditProject: Project?
     @Environment(\.managedObjectContext) private var context: NSManagedObjectContext
     
     @FetchRequest(
@@ -32,71 +80,30 @@ struct ProjectsView: View {
     
     var body: some View {
         VStack {
-            List {
+            List (selection: $selectedProject.project) {
                 Section("􀧒 In Progress") {
                     ForEach(inProgressProjects) { project in
-                        HStack(alignment: .center, spacing: 4) {
-                            Text(project.name ?? "")
-                                .font(.title2)
-                                
-                            Spacer()
-                            Text("P" + String(project.priority))
-                                .font(.body)
-                                .fontWeight(.black)
-                                .foregroundColor(Color.gray)
-                        }
+                       ProjectRow(project: project)
+                            .tag(project)
                         .onTapGesture {
                                     selectedProject.project = project
                                 }
                         .contextMenu(menuItems: {
                             
-                            Button("􀈊 Edit project") {
-                                self.selectedEditProject = project
-                                isEditProjectViewPresented = true
-                            }
-                            .sheet(isPresented: $isEditProjectViewPresented) {
-                                //EditProjectView(project: project)
-                                EditProjectView()
-                                    .frame(minWidth: 300.0, minHeight: 300.0)
-                            }
-                            
-                            Button("􀈑 Delete project") {
-                                context.delete(project)
-                                    do {
-                                        try context.save()
-                                    } catch {
-                                        // handle the Core Data error
-                                        print("Failed to delete task: \(error)")
-                                    }
-                            }
+                            projectMenu(project: project)
                         })
                     }
                 }
                 Section("􀓞 Not Started") {
                     ForEach(notStartedProjects) { project in
-                        HStack(alignment: .center, spacing: 4) {
-                            Text(project.name ?? "")
-                                .font(.title2)
-                            Spacer()
-                            Text("P" + String(project.priority))
-                                .font(.body)
-                                .fontWeight(.black)
-                                .foregroundColor(Color.gray)
-                        }
+                        ProjectRow(project: project)
+                            .tag(project)
                         .onTapGesture {
                                     selectedProject.project = project
                                 }
                         .contextMenu(menuItems: {
                             
-                            Button("􀈑 Delete project") {
-                                context.delete(project)
-                                    do {
-                                        try context.save()
-                                    } catch {
-                                        // handle the Core Data error
-                                        print("Failed to delete task: \(error)")
-                                    }
-                            }
+                            projectMenu(project: project)
                         })
                         
                     }
@@ -104,32 +111,14 @@ struct ProjectsView: View {
                 }
                 Section("􀁣 Done") {
                     ForEach(doneProjects) { project in
-                        HStack(alignment: .center, spacing: 4) {
-                            Text(project.name ?? "")
-                                .font(.title2)
-                            Spacer()
-                            Text("P" + String(project.priority))
-                                .font(.body)
-                                .fontWeight(.black)
-                                .foregroundColor(Color.gray)
-                        }
+                        ProjectRow(project: project)
+                            .tag(project)
                         .onTapGesture {
                                     selectedProject.project = project
                                 }
                         .contextMenu(menuItems: {
                             
-                            //edit name
-                            //edit priority
-                            
-                            Button("􀈑 Delete project") {
-                                context.delete(project)
-                                    do {
-                                        try context.save()
-                                    } catch {
-                                        // handle the Core Data error
-                                        print("Failed to delete task: \(error)")
-                                    }
-                            }
+                            projectMenu(project: project)
                         })
                     }
                 }

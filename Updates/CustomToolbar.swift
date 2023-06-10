@@ -37,7 +37,7 @@ struct CustomToolbar: View {
                 Image(systemName: "chevron.right")
             })
             
-            Spacer()
+            Spacer(minLength: 0)
             
             
             if dateFormatter.string(from: date) != (dateFormatter.string(from: Date.now)) {
