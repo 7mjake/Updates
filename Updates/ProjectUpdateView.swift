@@ -14,6 +14,9 @@ struct ProjectUpdateView: View {
     @State var notes = ""
    // @State var selectedProject = Project.
     
+    
+    
+    
     var body: some View {
         VStack(spacing: 0){
             ScrollView {
@@ -34,6 +37,9 @@ struct ProjectUpdateView: View {
                     Spacer(minLength: 8)
                     TextField("Any other updates", text: $notes, axis: .vertical)
                         .lineLimit(4...)
+                    
+                        
+                    
                 }
                 .padding(32)
             }

@@ -30,11 +30,34 @@ struct TaskListView: View {
         }
     }
     
+    func deleteAllTasks() {
+        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = Task.fetchRequest()
+
+        let batchDeleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+
+        do {
+            try context.execute(batchDeleteRequest)
+//            if let project = selectedProject.project {
+//                        fetchTasks(for: project)
+//                    }
+        } catch {
+            print("Failed to delete all tasks: \(error)")
+        }
+    }
+    
     
     
     
     var body: some View {
         VStack(alignment: .leading) {
+            
+            Spacer(minLength: 16)
+            Button(action: {
+                deleteAllTasks()
+            }, label: {
+                Text("DELETE ALL TASKS")
+            })
+            Spacer(minLength: 16)
             
             ForEach(tasks) { task in
                 VStack {
@@ -86,6 +109,10 @@ struct TaskListView: View {
                             }), label: {
                                 Text(task.name ?? "error")
                             })
+                            
+//                            Toggle(isOn: Binding(task.checked), label: {
+//                                Text(task.name ?? "error")
+//                            })
                             
                             Spacer()
                             
