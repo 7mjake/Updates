@@ -11,7 +11,7 @@ struct TaskListView: View {
     
     @EnvironmentObject var selectedProject: SelectedProject
     @State var addingTask = false
-    @State var newTask = "test"
+    @State var newTask = ""
     @State var newTaskComplete = false
     @State var newTaskDone = false
     
