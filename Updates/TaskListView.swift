@@ -14,6 +14,7 @@ struct TaskRow: View {
     @State private var updateContent: String = ""
     @State private var currentUpdate: Update?
     @State var taskChecked = Bool()
+    @FocusState private var isUpdateFocused: Bool
     
     func fetchExistingUpdate(for task: Task) -> Update? {
         let fetchRequest: NSFetchRequest<Update> = Update.fetchRequest()
@@ -66,6 +67,15 @@ struct TaskRow: View {
         }
     }
     
+    var dateFormatter = Self.makeDateFormatter()
+    static func makeDateFormatter() -> DateFormatter {
+        let dateFormatter = DateFormatter()
+        
+        dateFormatter.dateStyle = .short
+        
+        return dateFormatter
+    }
+    
     var body: some View {
         VStack(alignment: .leading) {
             
@@ -89,6 +99,11 @@ struct TaskRow: View {
                             print("Failed to delete update: \(error)")
                         }
                     }
+                }
+                
+                if task.dueDate != nil {
+                    Text(dateFormatter.string(from: task.dueDate!))
+                        .foregroundColor(task.dueDate! < Date.now ? .red : .gray)
                 }
                 
                 Spacer()
@@ -125,6 +140,7 @@ struct TaskRow: View {
             if taskChecked {
                 
                 TextField("Task Update", text: $updateContent, prompt: Text("Update"), axis: .vertical)
+                    .focused($isUpdateFocused)
                     .onAppear {
                         currentUpdate = fetchExistingUpdate(for: task) ?? createNewUpdate(for: task)
                         updateContent = currentUpdate?.content ?? ""
@@ -146,6 +162,7 @@ struct TaskRow: View {
                         }
                     }
                     .onChange(of: selectedDate.date) { newValue in
+                        isUpdateFocused = false
                         // Show the current day's update
                         currentUpdate = fetchExistingUpdate(for: task)
                         updateContent = currentUpdate?.content ?? ""
@@ -170,29 +187,153 @@ struct TaskRow: View {
     
 }
 
+struct NewTaskFields: View {
+    
+    @Environment(\.managedObjectContext) private var context: NSManagedObjectContext
+    @EnvironmentObject var selectedProject: SelectedProject
+    @EnvironmentObject var selectedDate: SelectedDate
+    @Binding var addingTask: Bool
+    
+    @State var newTask = ""
+    @State private var isDueDatePickerPresented = false
+    @State private var tempDueDate = Date()
+    @State var newTaskDueDate = Date()
+    @State var newTaskComplete = false
+    @State var newTaskDone = false
+    @State var buttonText = "Due date"
+    @FocusState private var newTaskField: Bool
+    
+    var dateFormatter = Self.makeDateFormatter()
+    static func makeDateFormatter() -> DateFormatter {
+        let dateFormatter = DateFormatter()
+        
+        dateFormatter.dateStyle = .short
+        
+        return dateFormatter
+    }
+    
+    var body: some View {
+        HStack(alignment: .bottom, spacing: 0) {
+            Toggle("", isOn: $newTaskDone.animation())
+                .disabled(/*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
+            TextField("New task", text: $newTask)
+                .textFieldStyle(PlainTextFieldStyle())
+            //.foregroundColor(.gray)
+                .focused($newTaskField)
+                .fixedSize()
+            
+            Spacer(minLength: 5)
+            
+            Button(action: {
+                isDueDatePickerPresented.toggle()
+            }, label: {
+                Text(buttonText)
+                    .foregroundColor(Color.gray)
+            })
+            .buttonStyle(.plain)
+            .popover(isPresented: $isDueDatePickerPresented, arrowEdge: Edge.trailing, content: {
+                DatePicker(
+                    "",
+                    selection: $tempDueDate,
+                    displayedComponents: [.date]
+                )
+                .datePickerStyle(.graphical)
+                .padding(EdgeInsets(top: 24, leading: 16, bottom: 8, trailing: 24))
+                .onChange(of: tempDueDate) { newContent in
+                    
+                    buttonText = dateFormatter.string(from: newContent)
+                    
+                }
+                
+                HStack {
+                    Button("Save", action: {
+                        newTaskDueDate = tempDueDate
+                        tempDueDate = Date()
+                        isDueDatePickerPresented = false
+                    })
+                    Spacer()
+                        .buttonStyle(.plain)
+                    Button("Cancel", action: {
+                        tempDueDate = Date()
+                        buttonText = "Due date"
+                        isDueDatePickerPresented = false
+                    })
+                    .buttonStyle(.plain)
+                    
+                }
+                .padding([.leading, .bottom, .trailing], 24.0)
+            })
+            
+            
+        }
+        .fixedSize()
+        // press enter to save
+        // press esc to cancel
+        
+        HStack {
+            Button("Save") {
+                addingTask = false
+                let task = Task(context: context)
+                task.id = UUID()
+                task.name = newTask
+                task.complete = false
+                task.dueDate = newTaskDueDate ?? nil
+                task.project = selectedProject.project
+                
+                //reset variables
+//                newTask = ""
+//                newTaskDueDate = Date()
+//                tempDueDate = Date()
+//                buttonText = "Due date"
+                
+                
+                
+                do {
+                    try context.save()
+                } catch {
+                    print(error)
+                }
+                
+            }
+            .buttonStyle(.link)
+            Button("Cancel") {
+                addingTask = false
+                
+                //reset variables
+//                newTask = ""
+//                newTaskDueDate = Date()
+//                tempDueDate = Date()
+//                buttonText = "Due date"
+            }
+            .buttonStyle(.link)
+        }
+    }
+}
 
 struct TaskListView: View {
     
     @EnvironmentObject var selectedProject: SelectedProject
     @EnvironmentObject var selectedDate: SelectedDate
-    
     @State var addingTask = false
-    @State var newTask = ""
-    @State var newTaskComplete = false
-    @State var newTaskDone = false
     
-    func deleteAllUpdates() {
-        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Update")
-        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-        
+    
+    
+    
+    func deleteAllTasks() {
+        guard let project = selectedProject.project else { return }
+        let tasks = allTasks.filter { $0.project == project }
+        for task in tasks {
+            context.delete(task)
+        }
         do {
-            try context.execute(deleteRequest)
+            try context.save()
         } catch let error as NSError {
             print("Error: \(error.domain)")
         }
     }
+
     
-    @FocusState private var newTaskField: Bool
+    
     @Environment(\.managedObjectContext) private var context: NSManagedObjectContext
     @FetchRequest(
         entity: Task.entity(),
@@ -216,71 +357,28 @@ struct TaskListView: View {
             
             //Adding Tasks
             if addingTask {
-                HStack(alignment: .bottom, spacing: 0) {
-                    Toggle("", isOn: $newTaskDone.animation())
-                        .disabled(/*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
-                    TextField("New task", text: $newTask)
-                        .textFieldStyle(PlainTextFieldStyle())
-                        .foregroundColor(.gray)
-                        .focused($newTaskField)
-                    
-                    
-                }
-                // press enter to save
-                // press esc to cancel
-                
-            }
-            
-            if !addingTask {
+                NewTaskFields(addingTask: $addingTask)
+            } else {
                 Button("Add a task") {
                     addingTask = true
-                    newTaskField = true
                 }
                 .buttonStyle(.link)
             }
-            //Saving or Canceling a new task
-            else if addingTask {
-                HStack {
-                    Button("Save") {
-                        addingTask = false
-                        let task = Task(context: context)
-                        task.id = UUID()
-                        task.name = newTask
-                        task.complete = false
-                        task.dueDate = Date.now
-                        task.project = selectedProject.project
-                        newTask = ""
-                        
-                        
-                        do {
-                            try context.save()
-                        } catch {
-                            print(error)
-                        }
-                        
-                    }
-                    .buttonStyle(.link)
-                    Button("Cancel") {
-                        addingTask = false
-                        newTask = ""
-                    }
-                    .buttonStyle(.link)
-                }
-            }
-            
-            //            Button(action: {
-            //                deleteAllUpdates()
-            //            }, label: {
-            //                Text("Delete All Updates")
-            //            })
-            //            .background(
-            //                RoundedRectangle(cornerRadius: 8, style: .continuous)
-            //                    .fill(Color.red)
-            //            )
         }
+        Spacer(minLength: 16)
+        Button(action: {
+            deleteAllTasks()
+        }, label: {
+            Text("Delete All Tasks")
+        })
+        .background(
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .fill(Color.red)
+        )
     }
-    
 }
+
+
 
 
 struct TaskListView_Previews: PreviewProvider {
