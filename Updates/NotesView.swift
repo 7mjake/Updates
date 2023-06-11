@@ -59,7 +59,7 @@ struct NotesView: View {
         } catch {
             print("Failed to save new Note: \(error)")
         }
-        print("new note created for  \(newNote.date)")
+        print("new note created for  \(String(describing: newNote.date))")
         return newNote
     }
     
@@ -91,44 +91,33 @@ struct NotesView: View {
     
     var body: some View {
         TextField("Any other updates", text: $noteContent, axis: .vertical)
+            .focused($isNotesFocused)
             .onAppear {
-                currentNote = fetchExistingNote(for: selectedProject) ?? createNewNote(for: selectedProject)
+                currentNote = fetchExistingNote(for: selectedProject) ?? nil
                 noteContent = currentNote?.content ?? ""
                 print("on appear")
             }
-        //                        .focused ($isNotesFocused)
-        //                        .onChange(of: isNotesFocused) { newValue in
-        //                            print("note focus: " + String(isNotesFocused))
-        //                            let note = fetchExistingNote(for: selectedProject)
-        //
-        //                            //create new note if selecting an empty field
-        //                            if newValue == false && noteContent.count != 0 {
-        //                                currentNote = createNewNote(for: selectedProject)
-        //                                print("new note created")
-        //                            }
-        //
-        //                            //delete note if leaving an empty field
-        //                            else if newValue == false && noteContent.count == 0 {
-        //                                //context.delete(note!)
-        //                                print("note deleted")
-        //                            }
-        //
-        //                            do {
-        //                                print("note saved")
-        //                                try context.save()
-        //                            } catch {
-        //                                print("Failed to save Note content: \(error)")
-        //                            }
-        //
-        //                            if fetchExistingNote(for: selectedProject) != nil {
-        //                                print("A note exists!")
-        //                            }
-        //
-        //                        }
             .onChange(of: noteContent) { newValue in
                 
                 // Update the Update's content whenever updateContent changes
-                currentNote?.content = newValue
+                currentNote?.content = noteContent
+                
+                if noteContent.isEmpty {
+                        // If the new value is empty and a note exists, delete it
+                        if let note = currentNote {
+                            context.delete(note)
+                            print("note deleted")
+                        }
+                    // Set currentNote to nil because it has been deleted
+                    currentNote = nil
+                    
+                    } else {
+                        // If the new value is not empty and no note exists, create a new one
+                        if currentNote == nil {
+                            currentNote = createNewNote(for: selectedProject)
+                            //print("new note created")
+                        }
+                    }
                 
                 do {
                     print("note saved")
@@ -138,14 +127,18 @@ struct NotesView: View {
                 }
             }
             .onChange(of: selectedDate.date) { newValue in
+                isNotesFocused = false
+                
                 // Show the current day's update
-                currentNote = fetchExistingNote(for: selectedProject) ?? createNewNote(for: selectedProject)
+                currentNote = fetchExistingNote(for: selectedProject) ?? nil
                 noteContent = currentNote?.content ?? ""
                 //print("date changed")
             }
             .onChange(of: selectedProject.project) { newValue in
+                isNotesFocused = false
+                
                 // Show the current day's update
-                currentNote = fetchExistingNote(for: selectedProject) ?? createNewNote(for: selectedProject)
+                currentNote = fetchExistingNote(for: selectedProject) ?? nil
                 noteContent = currentNote?.content ?? ""
                 //print("project changed")
             }
