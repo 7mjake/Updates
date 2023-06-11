@@ -11,12 +11,48 @@ struct TaskRow: View {
     @EnvironmentObject var selectedDate: SelectedDate
     @ObservedObject var task: Task
     @Environment(\.managedObjectContext) private var context: NSManagedObjectContext
-    @State var updateContent: String = ""
-    @State var currentUpdate: Update?
+    @State private var updateContent: String = ""
+    @State private var currentUpdate: Update?
+    @State var taskChecked = Bool()
     
-     
     
-    func fetchUpdate(for task: Task) -> Update {
+    
+//    func fetchUpdate(for task: Task) -> Update {
+//        let fetchRequest: NSFetchRequest<Update> = Update.fetchRequest()
+//        
+//        // Get the start of the day for the date argument
+//        let startOfDay = Calendar.current.startOfDay(for: selectedDate.date)
+//        
+//        // This predicate assumes 'date' is a Date type and 'task' is a relationship to the Task entity
+//        let predicate = NSPredicate(format: "date == %@ AND task == %@", startOfDay as NSDate, task)
+//        
+//        fetchRequest.predicate = predicate
+//        
+//        do {
+//            let updates = try context.fetch(fetchRequest)
+//            if let update = updates.first {
+//                // Return the first update if one exists
+//                return update
+//            }
+//        } catch {
+//            print("Failed to fetch Update: \(error)")
+//        }
+//        
+//        // If no Update was found or an error occurred, create a new Update
+//        let newUpdate = Update(context: context)
+//        newUpdate.date = startOfDay
+//        newUpdate.task = task
+//        
+//        do {
+//            try context.save()
+//        } catch {
+//            print("Failed to save new Update: \(error)")
+//        }
+//        
+//        return newUpdate
+//    }
+    
+    func fetchExistingUpdate(for task: Task) -> Update? {
         let fetchRequest: NSFetchRequest<Update> = Update.fetchRequest()
         
         // Get the start of the day for the date argument
@@ -37,36 +73,50 @@ struct TaskRow: View {
             print("Failed to fetch Update: \(error)")
         }
         
+        // If no Update was found or an error occurred, return nil
+        return nil
+    }
+    
+    func createNewUpdate(for task: Task) -> Update {
         // If no Update was found or an error occurred, create a new Update
         let newUpdate = Update(context: context)
-        newUpdate.date = startOfDay
+        newUpdate.date = Calendar.current.startOfDay(for: selectedDate.date)
         newUpdate.task = task
-        
+
         do {
             try context.save()
         } catch {
             print("Failed to save new Update: \(error)")
         }
-        
+
         return newUpdate
     }
     
+    func setTaskChecked() {
+        print("test print")
+        if fetchExistingUpdate(for: task) == nil {
+            taskChecked = Bool()
+            
+            print("box set to UN-checked")
+        } else {
+            taskChecked = true
+            print("box set to checked")
+        }
+    }
+    
     var body: some View {
-        VStack {
+        VStack(alignment: .leading) {
             
             HStack {
+                
                 //Completed Task
                 if task.complete {
-                    Toggle(isOn: Binding(get: {
-                        task.checked
-                    }, set: { newValue in
-                        task.checked = newValue
-                        try? context.save()
-                    }), label: {
+                    Toggle(isOn: $taskChecked, label: {
                         Text(task.name ?? "error")
                             .strikethrough()
                     })
                     .disabled(/*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
+                    
                     
                     Spacer()
                     Button("Undo") {
@@ -88,25 +138,32 @@ struct TaskRow: View {
                     
                 }
                 
+                
                 //Uncompleted Task
                 else if !task.complete {
-                    Toggle(isOn: Binding(get: {
-                        task.checked
-                    }, set: { newValue in
-                        task.checked = newValue
-                        
-                        let update = Update(context: self.context)
-                        update.date = selectedDate.date
-                        update.task = task
-                        
-                        try? context.save()
-                    }), label: {
+                    Toggle(isOn: $taskChecked, label: {
                         Text(task.name ?? "error")
                     })
+                    .disabled(task.complete)
+                    
+                    .onChange(of: taskChecked) { newValue in
+                        let update = fetchExistingUpdate(for: task)
+                        if newValue == false && fetchExistingUpdate(for: task) != nil{
+                            context.delete(update!)
+                            print("update deleted")
+                        }
+                    }
+                    
+                    // Update debug test
+//                    if fetchExistingUpdate(for: task) != nil {
+//                        //let taskChecked = true
+//                        Text("update here!")
+//                            .foregroundColor(Color.green)
+//                    }
                     
                     Spacer()
                     
-                    if task.checked {
+                    if taskChecked {
                         Button("Mark as Complete") {
                             task.complete = true
                         }
@@ -118,16 +175,21 @@ struct TaskRow: View {
             }
             
             //Task Update Field
-            if task.checked {
+            if taskChecked {
                 
                 TextField("Task Update", text: $updateContent, prompt: Text("Update"), axis: .vertical)
                     .onAppear {
-                        currentUpdate = fetchUpdate(for: task)
+                        currentUpdate = fetchExistingUpdate(for: task) ?? createNewUpdate(for: task)
                         updateContent = currentUpdate?.content ?? ""
+                        
                     }
                     .onChange(of: updateContent) { newValue in
+        
+                        
                         // Update the Update's content whenever updateContent changes
                         currentUpdate?.content = newValue
+                        
+                        
                         
                         do {
                             print("update saved")
@@ -138,14 +200,27 @@ struct TaskRow: View {
                     }
                     .onChange(of: selectedDate.date) { newValue in
                         // Show the current day's update
-                        currentUpdate = fetchUpdate(for: task)
+                        currentUpdate = fetchExistingUpdate(for: task)
                         updateContent = currentUpdate?.content ?? ""
+                        
+                        if fetchExistingUpdate(for: task) == nil {
+                            taskChecked = Bool()
+                        }
                     }
                     .lineLimit(2...)
+                    .disabled(task.complete)
+                    
                 
             }
         }
+        .onAppear {
+            setTaskChecked()
+        }
+        .onChange(of: selectedDate.date) { _ in
+            setTaskChecked()
+        }
     }
+        
 }
 
 
@@ -160,15 +235,15 @@ struct TaskListView: View {
     @State var newTaskDone = false
     
     func deleteAllUpdates() {
-            let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Update")
-            let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-
-            do {
-                try context.execute(deleteRequest)
-            } catch let error as NSError {
-                print("Error: \(error.domain)")
-            }
+        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Update")
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+        
+        do {
+            try context.execute(deleteRequest)
+        } catch let error as NSError {
+            print("Error: \(error.domain)")
         }
+    }
     
     @FocusState private var newTaskField: Bool
     @Environment(\.managedObjectContext) private var context: NSManagedObjectContext
@@ -189,6 +264,7 @@ struct TaskListView: View {
             
             ForEach(filteredTasks) { task in
                 TaskRow(task: task)
+                
             }
             
             //Adding Tasks
@@ -245,15 +321,15 @@ struct TaskListView: View {
                 }
             }
             
-            Button(action: {
-                deleteAllUpdates()
-            }, label: {
-                Text("Delete All Updates")
-            })
-            .background(
-                            RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                .fill(Color.red)
-                            )
+//            Button(action: {
+//                deleteAllUpdates()
+//            }, label: {
+//                Text("Delete All Updates")
+//            })
+//            .background(
+//                RoundedRectangle(cornerRadius: 8, style: .continuous)
+//                    .fill(Color.red)
+//            )
         }
     }
     
