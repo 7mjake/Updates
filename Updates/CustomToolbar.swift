@@ -9,14 +9,15 @@ import SwiftUI
 
 struct CustomToolbar: View {
     
-    @State private var date = Date()
+    @EnvironmentObject var selectedDate: SelectedDate
+    //@State private var date = Date()
     @State private var isDatePickerPresented = false
     private var dateFormatter = Self.makeDateFormatter()
     
     static func makeDateFormatter() -> DateFormatter {
         let dateFormatter = DateFormatter()
         
-        dateFormatter.dateStyle = .medium
+        dateFormatter.dateStyle = .full
         
         return dateFormatter
     }
@@ -24,34 +25,34 @@ struct CustomToolbar: View {
     var body: some View {
         HStack {
             Button(action: {
-                date = Calendar.current.date(byAdding: .day, value: -1, to: date) ?? date
+                selectedDate.date = Calendar.current.date(byAdding: .day, value: -1, to: selectedDate.date) ?? selectedDate.date
             }, label: {
                 Image(systemName: "chevron.left")
             })
-            Text(dateFormatter.string(from: date))
+            Text(dateFormatter.string(from: selectedDate.date))
                 .font(.largeTitle)
                 .fontWeight(.heavy)
             Button(action: {
-                date = Calendar.current.date(byAdding: .day, value: 1, to: date) ?? date
+                selectedDate.date = Calendar.current.date(byAdding: .day, value: 1, to: selectedDate.date) ?? selectedDate.date
             }, label: {
                 Image(systemName: "chevron.right")
             })
             
-            Spacer(minLength: 0)
+            //Spacer(minLength: 0)
             
             
-            if dateFormatter.string(from: date) != (dateFormatter.string(from: Date.now)) {
+            if dateFormatter.string(from: selectedDate.date) != (dateFormatter.string(from: Date.now)) {
                 Button(action: {
-                    date = Date.now
+                    selectedDate.date = Date.now
                 }, label: {
                     Text("Today")
                         .fontWeight(.bold)
                         .foregroundColor(Color.blue)
                 })
                 
-            } else if dateFormatter.string(from: date) == (dateFormatter.string(from: Date.now)) {
+            } else if dateFormatter.string(from: selectedDate.date) == (dateFormatter.string(from: Date.now)) {
                 Button(action: {
-                    date = Date.now
+                    selectedDate.date = Date.now
                 }, label: {
                     Text("Today")
                 })
@@ -67,7 +68,7 @@ struct CustomToolbar: View {
             }).popover(isPresented: $isDatePickerPresented, arrowEdge: Edge.bottom, content: {
                 DatePicker(
                     "",
-                    selection: $date,
+                    selection: $selectedDate.date,
                     displayedComponents: [.date]
                 )
                 .datePickerStyle(.graphical)

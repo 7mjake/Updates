@@ -10,19 +10,19 @@ import SwiftUI
 struct ContentView: View {
     
     @StateObject var selectedProject = SelectedProject()
+    @StateObject var selectedDate = SelectedDate()
     @State private var date = Date()
     @State private var isDatePickerPresented = false
     private var dateFormatter = Self.makeDateFormatter()
     
-    
-    
     static func makeDateFormatter() -> DateFormatter {
         let dateFormatter = DateFormatter()
         
-        dateFormatter.dateStyle = .medium
+        dateFormatter.dateStyle = .full
         
         return dateFormatter
     }
+    
     
     var body: some View {
         NavigationSplitView {
@@ -32,22 +32,26 @@ struct ContentView: View {
             VStack (spacing: 0) {
                 //CustomToolbar()
                 //Divider()
+                
                 ProjectUpdateView()
             }
         }
         .toolbar {
             ToolbarItem {
                 CustomToolbar()
+                    .environmentObject(selectedDate)
             }
             
         }
         .navigationTitle("")
         .environmentObject(selectedProject)
     }
-    
-    
-    
 }
+
+
+
+
+
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {

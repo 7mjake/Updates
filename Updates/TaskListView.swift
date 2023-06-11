@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct TaskRow: View {
+    //@EnvironmentObject var selectedDate: SelectedDate
     @ObservedObject var task: Task
     @Environment(\.managedObjectContext) private var context: NSManagedObjectContext
     @State var updateContent: String = ""
