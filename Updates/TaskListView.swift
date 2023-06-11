@@ -56,14 +56,13 @@ struct TaskRow: View {
     }
     
     func setTaskChecked() {
-        print("test print")
         if fetchExistingUpdate(for: task) == nil {
             taskChecked = Bool()
             
-            print("box set to UN-checked")
+            //print("box set to UN-checked")
         } else {
             taskChecked = true
-            print("box set to checked")
+            //print("box set to checked")
         }
     }
     
@@ -82,6 +81,13 @@ struct TaskRow: View {
                     if newValue == false && fetchExistingUpdate(for: task) != nil{
                         context.delete(update!)
                         print("update deleted")
+                        
+                        do {
+                            try context.save()
+                        } catch {
+                            // handle the Core Data error
+                            print("Failed to delete update: \(error)")
+                        }
                     }
                 }
                 

@@ -8,11 +8,14 @@
 import SwiftUI
 
 
+
+
 struct ProjectUpdateView: View {
     
+    @Environment(\.managedObjectContext) private var context: NSManagedObjectContext
     @EnvironmentObject var selectedProject: SelectedProject
     @EnvironmentObject var selectedDate: SelectedDate
-    @State var notes = ""
+    
     
     
     var body: some View {
@@ -37,8 +40,15 @@ struct ProjectUpdateView: View {
                         .font(.title2)
                         .fontWeight(.medium)
                     Spacer(minLength: 8)
-                    TextField("Any other updates", text: $notes, axis: .vertical)
-                        .lineLimit(4...)
+                    
+//                    if fetchExistingNote(for: selectedProject) != nil {
+//                        Text("A note exists!")
+//                            .foregroundColor(Color.green)
+//                        
+//                    }
+                    
+                    
+                    NotesView()
                     
                         
                     
