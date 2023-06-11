@@ -11,10 +11,8 @@ import SwiftUI
 struct ProjectUpdateView: View {
     
     @EnvironmentObject var selectedProject: SelectedProject
+    @EnvironmentObject var selectedDate: SelectedDate
     @State var notes = ""
-   // @State var selectedProject = Project.
-    
-    
     
     
     var body: some View {
@@ -32,7 +30,7 @@ struct ProjectUpdateView: View {
                     Spacer(minLength: 8)
                     
                     TaskListView()
-                    
+                        
                     Spacer(minLength: 24)
                     
                     Text("Notes")

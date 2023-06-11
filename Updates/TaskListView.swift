@@ -8,16 +8,19 @@
 import SwiftUI
 
 struct TaskRow: View {
-    //@EnvironmentObject var selectedDate: SelectedDate
+    @EnvironmentObject var selectedDate: SelectedDate
     @ObservedObject var task: Task
     @Environment(\.managedObjectContext) private var context: NSManagedObjectContext
     @State var updateContent: String = ""
+    @State var currentUpdate: Update?
     
-    func fetchUpdate(for task: Task, on date: Date) -> Update {
+     
+    
+    func fetchUpdate(for task: Task) -> Update {
         let fetchRequest: NSFetchRequest<Update> = Update.fetchRequest()
         
         // Get the start of the day for the date argument
-        let startOfDay = Calendar.current.startOfDay(for: date)
+        let startOfDay = Calendar.current.startOfDay(for: selectedDate.date)
         
         // This predicate assumes 'date' is a Date type and 'task' is a relationship to the Task entity
         let predicate = NSPredicate(format: "date == %@ AND task == %@", startOfDay as NSDate, task)
@@ -50,6 +53,7 @@ struct TaskRow: View {
     
     var body: some View {
         VStack {
+            
             HStack {
                 //Completed Task
                 if task.complete {
@@ -92,7 +96,7 @@ struct TaskRow: View {
                         task.checked = newValue
                         
                         let update = Update(context: self.context)
-                        update.date = Date.now
+                        update.date = selectedDate.date
                         update.task = task
                         
                         try? context.save()
@@ -118,13 +122,12 @@ struct TaskRow: View {
                 
                 TextField("Task Update", text: $updateContent, prompt: Text("Update"), axis: .vertical)
                     .onAppear {
-                        let update = fetchUpdate(for: task, on: Date.now)
-                        updateContent = update.content ?? ""
+                        currentUpdate = fetchUpdate(for: task)
+                        updateContent = currentUpdate?.content ?? ""
                     }
                     .onChange(of: updateContent) { newValue in
                         // Update the Update's content whenever updateContent changes
-                        let update = fetchUpdate(for: task, on: Date.now)
-                        update.content = newValue
+                        currentUpdate?.content = newValue
                         
                         do {
                             print("update saved")
@@ -132,6 +135,11 @@ struct TaskRow: View {
                         } catch {
                             print("Failed to save Update content: \(error)")
                         }
+                    }
+                    .onChange(of: selectedDate.date) { newValue in
+                        // Show the current day's update
+                        currentUpdate = fetchUpdate(for: task)
+                        updateContent = currentUpdate?.content ?? ""
                     }
                     .lineLimit(2...)
                 
@@ -144,6 +152,7 @@ struct TaskRow: View {
 struct TaskListView: View {
     
     @EnvironmentObject var selectedProject: SelectedProject
+    @EnvironmentObject var selectedDate: SelectedDate
     
     @State var addingTask = false
     @State var newTask = ""
@@ -174,9 +183,9 @@ struct TaskListView: View {
         return allTasks.filter { $0.project == project }
     }
     
-    
     var body: some View {
         VStack(alignment: .leading) {
+            
             
             ForEach(filteredTasks) { task in
                 TaskRow(task: task)

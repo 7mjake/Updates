@@ -34,6 +34,7 @@ struct ContentView: View {
                 //Divider()
                 
                 ProjectUpdateView()
+                    .environmentObject(selectedDate)
             }
         }
         .toolbar {
