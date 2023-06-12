@@ -197,6 +197,7 @@ struct NewTaskFields: View {
     @State var newTask = ""
     @State private var isDueDatePickerPresented = false
     @State private var tempDueDate = Date()
+    @State private var isDatePicked = false
     @State var newTaskDueDate = Date()
     @State var newTaskComplete = false
     @State var newTaskDone = false
@@ -250,6 +251,7 @@ struct NewTaskFields: View {
                     Button("Save", action: {
                         newTaskDueDate = tempDueDate
                         tempDueDate = Date()
+                        isDatePicked = true
                         isDueDatePickerPresented = false
                     })
                     Spacer()
@@ -257,6 +259,7 @@ struct NewTaskFields: View {
                     Button("Cancel", action: {
                         tempDueDate = Date()
                         buttonText = "Due date"
+                        isDatePicked = false
                         isDueDatePickerPresented = false
                     })
                     .buttonStyle(.plain)
@@ -278,8 +281,11 @@ struct NewTaskFields: View {
                 task.id = UUID()
                 task.name = newTask
                 task.complete = false
-                task.dueDate = newTaskDueDate ?? nil
                 task.project = selectedProject.project
+                
+                if isDatePicked {
+                    task.dueDate = newTaskDueDate
+                }
                 
                 do {
                     try context.save()
