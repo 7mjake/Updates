@@ -220,6 +220,7 @@ struct NewTaskFields: View {
                 .textFieldStyle(PlainTextFieldStyle())
             //.foregroundColor(.gray)
                 .focused($newTaskField)
+                .onAppear {newTaskField = true}
                 .fixedSize()
             
             Spacer(minLength: 5)
@@ -280,14 +281,6 @@ struct NewTaskFields: View {
                 task.dueDate = newTaskDueDate ?? nil
                 task.project = selectedProject.project
                 
-                //reset variables
-//                newTask = ""
-//                newTaskDueDate = Date()
-//                tempDueDate = Date()
-//                buttonText = "Due date"
-                
-                
-                
                 do {
                     try context.save()
                 } catch {
@@ -299,11 +292,6 @@ struct NewTaskFields: View {
             Button("Cancel") {
                 addingTask = false
                 
-                //reset variables
-//                newTask = ""
-//                newTaskDueDate = Date()
-//                tempDueDate = Date()
-//                buttonText = "Due date"
             }
             .buttonStyle(.link)
         }
