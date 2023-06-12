@@ -25,6 +25,8 @@
 		96AE14DC2A311E8900AFC5A3 /* ProjectAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96AE14DB2A311E8900AFC5A3 /* ProjectAttributes.swift */; };
 		96D180A92A33D80F00FF9899 /* EditProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D180A82A33D80F00FF9899 /* EditProjectView.swift */; };
 		96D180AB2A33E10000FF9899 /* SelectedProject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D180AA2A33E10000FF9899 /* SelectedProject.swift */; };
+		96F6436D2A37D3A800FE4A8E /* NewTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F6436C2A37D3A800FE4A8E /* NewTaskView.swift */; };
+		96F6436F2A37D46A00FE4A8E /* TaskRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96F6436E2A37D46A00FE4A8E /* TaskRow.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,6 +69,8 @@
 		96AE14DB2A311E8900AFC5A3 /* ProjectAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectAttributes.swift; sourceTree = "<group>"; };
 		96D180A82A33D80F00FF9899 /* EditProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProjectView.swift; sourceTree = "<group>"; };
 		96D180AA2A33E10000FF9899 /* SelectedProject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedProject.swift; sourceTree = "<group>"; };
+		96F6436C2A37D3A800FE4A8E /* NewTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTaskView.swift; sourceTree = "<group>"; };
+		96F6436E2A37D46A00FE4A8E /* TaskRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskRow.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,6 +127,8 @@
 				967E4F5D2A323144005D1AEE /* ProjectUpdateView.swift */,
 				963E8C7F2A3662F0003DEBFE /* NotesView.swift */,
 				96AE14D92A30F8FB00AFC5A3 /* TaskListView.swift */,
+				96F6436E2A37D46A00FE4A8E /* TaskRow.swift */,
+				96F6436C2A37D3A800FE4A8E /* NewTaskView.swift */,
 				963558242A2E3F5900109667 /* ProjectsView.swift */,
 				963558262A2E409A00109667 /* AddProjectView.swift */,
 				96D180A82A33D80F00FF9899 /* EditProjectView.swift */,
@@ -308,6 +314,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				96F6436F2A37D46A00FE4A8E /* TaskRow.swift in Sources */,
 				963E8C802A3662F0003DEBFE /* NotesView.swift in Sources */,
 				96AE14DA2A30F8FB00AFC5A3 /* TaskListView.swift in Sources */,
 				96AE14DC2A311E8900AFC5A3 /* ProjectAttributes.swift in Sources */,
@@ -316,6 +323,7 @@
 				963557F92A2E31CC00109667 /* ContentView.swift in Sources */,
 				963557F72A2E31CC00109667 /* UpdatesApp.swift in Sources */,
 				963E8C7E2A361375003DEBFE /* SelectedDate.swift in Sources */,
+				96F6436D2A37D3A800FE4A8E /* NewTaskView.swift in Sources */,
 				967E4F5E2A323144005D1AEE /* ProjectUpdateView.swift in Sources */,
 				96D180AB2A33E10000FF9899 /* SelectedProject.swift in Sources */,
 				963558252A2E3F5900109667 /* ProjectsView.swift in Sources */,
