@@ -8,9 +8,11 @@
 import SwiftUI
 
 struct TaskRow: View {
+    
+    @Environment(\.managedObjectContext) private var context: NSManagedObjectContext
+    
     @EnvironmentObject var selectedDate: SelectedDate
     @ObservedObject var task: Task
-    @Environment(\.managedObjectContext) private var context: NSManagedObjectContext
     @State private var updateContent: String = ""
     @State private var currentUpdate: Update?
     @State var taskChecked = Bool()
@@ -360,15 +362,15 @@ struct TaskListView: View {
             }
         }
         Spacer(minLength: 16)
-        Button(action: {
-            deleteAllTasks()
-        }, label: {
-            Text("Delete All Tasks")
-        })
-        .background(
-            RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .fill(Color.red)
-        )
+//        Button(action: {
+//            deleteAllTasks()
+//        }, label: {
+//            Text("Delete All Tasks")
+//        })
+//        .background(
+//            RoundedRectangle(cornerRadius: 8, style: .continuous)
+//                .fill(Color.red)
+//        )
     }
 }
 

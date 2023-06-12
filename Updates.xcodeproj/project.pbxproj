@@ -21,7 +21,6 @@
 		963E8C7E2A361375003DEBFE /* SelectedDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963E8C7D2A361375003DEBFE /* SelectedDate.swift */; };
 		963E8C802A3662F0003DEBFE /* NotesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963E8C7F2A3662F0003DEBFE /* NotesView.swift */; };
 		967E4F5E2A323144005D1AEE /* ProjectUpdateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 967E4F5D2A323144005D1AEE /* ProjectUpdateView.swift */; };
-		967E4F602A325B8E005D1AEE /* CustomToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 967E4F5F2A325B8E005D1AEE /* CustomToolbar.swift */; };
 		96AE14DA2A30F8FB00AFC5A3 /* TaskListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96AE14D92A30F8FB00AFC5A3 /* TaskListView.swift */; };
 		96AE14DC2A311E8900AFC5A3 /* ProjectAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96AE14DB2A311E8900AFC5A3 /* ProjectAttributes.swift */; };
 		96D180A92A33D80F00FF9899 /* EditProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96D180A82A33D80F00FF9899 /* EditProjectView.swift */; };
@@ -64,7 +63,6 @@
 		963E8C7D2A361375003DEBFE /* SelectedDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedDate.swift; sourceTree = "<group>"; };
 		963E8C7F2A3662F0003DEBFE /* NotesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesView.swift; sourceTree = "<group>"; };
 		967E4F5D2A323144005D1AEE /* ProjectUpdateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectUpdateView.swift; sourceTree = "<group>"; };
-		967E4F5F2A325B8E005D1AEE /* CustomToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomToolbar.swift; sourceTree = "<group>"; };
 		96AE14D92A30F8FB00AFC5A3 /* TaskListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListView.swift; sourceTree = "<group>"; };
 		96AE14DB2A311E8900AFC5A3 /* ProjectAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectAttributes.swift; sourceTree = "<group>"; };
 		96D180A82A33D80F00FF9899 /* EditProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProjectView.swift; sourceTree = "<group>"; };
@@ -122,7 +120,6 @@
 				967E4F5B2A322386005D1AEE /* New Group */,
 				963557F62A2E31CC00109667 /* UpdatesApp.swift */,
 				963557F82A2E31CC00109667 /* ContentView.swift */,
-				967E4F5F2A325B8E005D1AEE /* CustomToolbar.swift */,
 				967E4F5D2A323144005D1AEE /* ProjectUpdateView.swift */,
 				963E8C7F2A3662F0003DEBFE /* NotesView.swift */,
 				96AE14D92A30F8FB00AFC5A3 /* TaskListView.swift */,
@@ -314,7 +311,6 @@
 				963E8C802A3662F0003DEBFE /* NotesView.swift in Sources */,
 				96AE14DA2A30F8FB00AFC5A3 /* TaskListView.swift in Sources */,
 				96AE14DC2A311E8900AFC5A3 /* ProjectAttributes.swift in Sources */,
-				967E4F602A325B8E005D1AEE /* CustomToolbar.swift in Sources */,
 				963558272A2E409A00109667 /* AddProjectView.swift in Sources */,
 				963558292A2E439200109667 /* DataController.swift in Sources */,
 				963557F92A2E31CC00109667 /* ContentView.swift in Sources */,
@@ -491,6 +487,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = design.jakemartin.Updates;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -516,6 +513,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = design.jakemartin.Updates;
 				PRODUCT_NAME = "$(TARGET_NAME)";

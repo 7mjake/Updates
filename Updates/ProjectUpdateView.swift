@@ -15,6 +15,8 @@ struct ProjectUpdateView: View {
     @Environment(\.managedObjectContext) private var context: NSManagedObjectContext
     @EnvironmentObject var selectedProject: SelectedProject
     @EnvironmentObject var selectedDate: SelectedDate
+    @FocusState var isNotesFocused: Bool
+
     
     
     
@@ -48,7 +50,8 @@ struct ProjectUpdateView: View {
 //                    }
                     
                     
-                    NotesView()
+                    NotesView(isNotesFocused: _isNotesFocused)
+                    
                     
                         
                     
@@ -71,6 +74,9 @@ struct ProjectUpdateView: View {
                 .buttonStyle(.link)
             }
             .padding(EdgeInsets(top: 16, leading: 32, bottom: 16, trailing: 32))
+        }
+        .onTapGesture {
+            isNotesFocused = false
         }
     }
 }

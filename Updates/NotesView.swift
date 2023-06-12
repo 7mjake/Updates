@@ -14,7 +14,7 @@ struct NotesView: View {
     @EnvironmentObject var selectedDate: SelectedDate
     @State private var currentNote: Note?
     @State private var noteContent = ""
-    @FocusState private var isNotesFocused: Bool
+    @FocusState var isNotesFocused: Bool
     
     func fetchExistingNote(for project: SelectedProject) -> Note? {
         guard let project = selectedProject.project else {
@@ -144,9 +144,9 @@ struct NotesView: View {
             }
             .lineLimit(4...)
         
-        Button("Delete empty notes", action: {
-            deleteEmptyNotes()
-        })
+//        Button("Delete empty notes", action: {
+//            deleteEmptyNotes()
+//        })
     }
     
     
