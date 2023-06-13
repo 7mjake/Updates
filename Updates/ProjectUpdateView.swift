@@ -7,9 +7,6 @@
 
 import SwiftUI
 
-
-
-
 struct ProjectUpdateView: View {
     
     @Environment(\.managedObjectContext) private var context: NSManagedObjectContext
@@ -17,13 +14,10 @@ struct ProjectUpdateView: View {
     @EnvironmentObject var selectedDate: SelectedDate
     @FocusState var isNotesFocused: Bool
 
-    
-    
-    
     var body: some View {
-        VStack(spacing: 0){
+        VStack(spacing: 0) {
             ScrollView {
-                VStack(alignment: .leading, spacing: 0){
+                VStack(alignment: .leading, spacing: 0) {
                     Text(selectedProject.project?.name ?? "No project selected")
                         .font(.largeTitle)
                         .fontWeight(.bold)

@@ -83,16 +83,16 @@ struct TaskListView: View {
             }
         }
         
-        Spacer(minLength: 16)
-                Button(action: {
-                    deleteAllTasks()
-                }, label: {
-                    Text("Delete All Tasks")
-                })
-                .background(
-                    RoundedRectangle(cornerRadius: 8, style: .continuous)
-                        .fill(Color.red)
-                )
+//        Spacer(minLength: 16)
+//                Button(action: {
+//                    deleteAllTasks()
+//                }, label: {
+//                    Text("Delete All Tasks")
+//                })
+//                .background(
+//                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+//                        .fill(Color.red)
+//                )
     }
 }
 

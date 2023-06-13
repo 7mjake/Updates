@@ -14,10 +14,6 @@ struct ContentView: View {
     @State private var date = Date()
     @State private var isDatePickerPresented = false
     private var dateFormatter = Self.makeDateFormatter()
-  
-    
-    
-    
     
     static func makeDateFormatter() -> DateFormatter {
         let dateFormatter = DateFormatter()
@@ -42,46 +38,38 @@ struct ContentView: View {
             }
         }
         .toolbar {
-            ToolbarItem (placement: .navigation){
-                
+            ToolbarItem (placement: .navigation) {
                 HStack {
                     Button(action: {
-                        selectedDate.date = Calendar.current.date(byAdding: .day, value: -1, to: selectedDate.date) ?? selectedDate.date
+                        if let previousDay = Calendar.current.date(byAdding: .day, value: -1, to: selectedDate.date) {
+                            selectedDate.date = previousDay
+                        }
                     }, label: {
                         Image(systemName: "chevron.left")
                     })
                     Button(action: {
-                        selectedDate.date = Calendar.current.date(byAdding: .day, value: 1, to: selectedDate.date) ?? selectedDate.date
+                        if let nextDay = Calendar.current.date(byAdding: .day, value: 1, to: selectedDate.date) {
+                            selectedDate.date = nextDay
+                        }
                     }, label: {
                         Image(systemName: "chevron.right")
                     })
                     Text(dateFormatter.string(from: selectedDate.date))
                         .font(.largeTitle)
                         .fontWeight(.heavy)
-                    
                 }
             }
             ToolbarItem {
                 HStack {
-                    if dateFormatter.string(from: selectedDate.date) != (dateFormatter.string(from: Date.now)) {
-                        Button(action: {
-                            selectedDate.date = Date.now
-                        }, label: {
-                            Text("Today")
-                                .fontWeight(.bold)
-                                .foregroundColor(Color.blue)
-                        })
-                        
-                    } else if dateFormatter.string(from: selectedDate.date) == (dateFormatter.string(from: Date.now)) {
-                        Button(action: {
-                            selectedDate.date = Date.now
-                        }, label: {
-                            Text("Today")
-                        })
-                        .disabled(/*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
-                    }
-                    
-                    
+                    Button(action: {
+                        selectedDate.date = Date.now
+                        print("button works")
+                    }, label: {
+                        Text("Today")
+                            .fontWeight(.bold)
+                            .foregroundColor(Color.blue)
+                    })
+                    .disabled(Calendar.current.isDateInToday(selectedDate.date))
                     
                     Button(action: {
                         isDatePickerPresented.toggle()

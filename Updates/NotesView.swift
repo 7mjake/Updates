@@ -28,24 +28,16 @@ struct NotesView: View {
         let startOfDay = Calendar.current.startOfDay(for: selectedDate.date)
         
         // This predicate assumes 'date' is a Date type and 'task' is a relationship to the Note entity
-        let predicate = NSPredicate(format: "date == %@ AND project == %@", startOfDay as NSDate, selectedProject.project!)
+        let predicate = NSPredicate(format: "date == %@ AND project == %@", startOfDay as NSDate, project)
         
         fetchRequest.predicate = predicate
         
         do {
             let notes = try context.fetch(fetchRequest)
-            if let note = notes.first {
-                // Return the first note if one exists
-                return note
-            }
+            return notes.first
         } catch {
-            print("Failed to fetch Note: \(error)")
+            return nil
         }
-        
-        // If no Note was found or an error occurred, return nil
-        
-        print("no note found")
-        return nil
     }
     
     func createNewNote(for project: SelectedProject) -> Note {
@@ -69,6 +61,8 @@ struct NotesView: View {
         // This predicate finds Notes where content is nil or an empty string
         let predicate = NSPredicate(format: "content == nil OR content == ''")
         fetchRequest.predicate = predicate
+        
+        // NSBatchDeleteRequest
 
         do {
             let emptyNotes = try context.fetch(fetchRequest)
@@ -93,31 +87,29 @@ struct NotesView: View {
         TextField("Any other updates", text: $noteContent, axis: .vertical)
             .focused($isNotesFocused)
             .onAppear {
-                currentNote = fetchExistingNote(for: selectedProject) ?? nil
+                currentNote = fetchExistingNote(for: selectedProject)
                 noteContent = currentNote?.content ?? ""
                 print("on appear")
             }
             .onChange(of: noteContent) { newValue in
+                let hasCurrentNote = currentNote != nil
+                let hasContent = !noteContent.isEmpty
+                let noteContentEmpty = noteContent.isEmpty
+                let shouldDeleteNote = noteContentEmpty && hasCurrentNote
+                let shouldUpdateExistingNote = hasCurrentNote && hasContent
+                let shouldCreateNote = !hasCurrentNote && hasContent
                 
-                // Update the Update's content whenever updateContent changes
-                currentNote?.content = noteContent
-                
-                if noteContent.isEmpty {
-                        // If the new value is empty and a note exists, delete it
-                        if let note = currentNote {
-                            context.delete(note)
-                            print("note deleted")
-                        }
-                    // Set currentNote to nil because it has been deleted
-                    currentNote = nil
-                    
-                    } else {
-                        // If the new value is not empty and no note exists, create a new one
-                        if currentNote == nil {
-                            currentNote = createNewNote(for: selectedProject)
-                            //print("new note created")
-                        }
-                    }
+                if shouldDeleteNote,
+                   let currentNote {
+                    context.delete(currentNote)
+                    self.currentNote = nil
+                } else if shouldUpdateExistingNote {
+                    currentNote?.content = noteContent
+                } else if shouldCreateNote {
+                    let note = createNewNote(for: selectedProject)
+                    note.content = noteContent
+                    currentNote = note
+                }
                 
                 do {
                     print("note saved")

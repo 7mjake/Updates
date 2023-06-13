@@ -86,7 +86,7 @@ struct TaskRow: View {
                 
                 //Task checkbox
                 Toggle(isOn: $taskChecked, label: {
-                    Text(task.name ?? "error")
+                    Text(task.name ?? "")
                         .fontWeight(.heavy)
                 })
                 .disabled(task.complete)
@@ -108,7 +108,7 @@ struct TaskRow: View {
                 
                 if task.dueDate != nil {
                     Text(dateFormatter.string(from: task.dueDate!))
-                        .foregroundStyle(task.dueDate! < Date.now ? .red : .gray)
+                        .foregroundStyle(Calendar.current.startOfDay(for: task.dueDate!) <= Calendar.current.startOfDay(for: selectedDate.date) ? .red : .gray)
                 }
                 
                 

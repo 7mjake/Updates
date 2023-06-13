@@ -11,8 +11,9 @@ import CoreData
 @main
 struct UpdatesApp: App {
     
-    @StateObject private var dataController = DataController()
+    // MARK: - Properties
     
+    @StateObject private var dataController = DataController()
     
     var body: some Scene {
         WindowGroup {
@@ -23,4 +24,5 @@ struct UpdatesApp: App {
                 .environmentObject(dataController)
         }
     }
+
 }
