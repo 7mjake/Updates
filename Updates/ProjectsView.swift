@@ -80,6 +80,7 @@ struct ProjectsView: View {
     
     var body: some View {
         VStack {
+            
             List (selection: $selectedProject.project) {
                 Section("􀧒 In Progress") {
                     ForEach(inProgressProjects) { project in
