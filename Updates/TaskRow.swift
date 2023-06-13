@@ -17,6 +17,7 @@ struct TaskRow: View {
     @State private var currentUpdate: Update?
     @State var taskChecked = Bool()
     @FocusState private var isUpdateFocused: Bool
+
     
     func fetchExistingUpdate(for task: Task) -> Update? {
         let fetchRequest: NSFetchRequest<Update> = Update.fetchRequest()
@@ -79,16 +80,18 @@ struct TaskRow: View {
     }
     
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 4) {
             
             HStack {
                 
                 //Task checkbox
                 Toggle(isOn: $taskChecked, label: {
                     Text(task.name ?? "error")
+                        .fontWeight(.heavy)
                 })
                 .disabled(task.complete)
                 .onChange(of: taskChecked) { newValue in
+                    
                     let update = fetchExistingUpdate(for: task)
                     if newValue == false && fetchExistingUpdate(for: task) != nil{
                         context.delete(update!)
@@ -105,8 +108,10 @@ struct TaskRow: View {
                 
                 if task.dueDate != nil {
                     Text(dateFormatter.string(from: task.dueDate!))
-                        .foregroundColor(task.dueDate! < Date.now ? .red : .gray)
+                        .foregroundStyle(task.dueDate! < Date.now ? .red : .gray)
                 }
+                
+                
                 
                 Spacer()
                 
@@ -114,24 +119,31 @@ struct TaskRow: View {
                 if taskChecked && !task.complete {
                     Button("Mark as Complete") {
                         task.complete = true
+                        task.dateComplete = selectedDate.date
                     }
                     .buttonStyle(.link)
-                } else if taskChecked && task.complete {
-                    Button("Undo") {
-                        task.complete = false
+                     
+                } else if task.complete{
+                    HStack(spacing: 0.0) {
+                        
+                        let completeToday = selectedDate.date == task.dateComplete
+                        
+                        Text("Task completed on ")
+                            .foregroundStyle(.gray)
+                        
+                        Button(task.dateComplete != nil ? dateFormatter.string(from: task.dateComplete!) : "No dateComplete found", action: {
+                            selectedDate.date = task.dateComplete ?? selectedDate.date
+                        })
+                        .buttonStyle(.plain)
+                        .foregroundStyle(completeToday ? .gray : .blue)
                     }
-                    .buttonStyle(.link)
-                    Button("Delete task") {
-                        context.delete(task)
-                        do {
-                            try context.save()
-                        } catch {
-                            // handle the Core Data error
-                            print("Failed to delete task: \(error)")
+                    if taskChecked && task.complete && task.dateComplete == selectedDate.date{
+                        Button("Undo") {
+                            task.complete = false
+                            task.dateComplete = nil
                         }
+                        .buttonStyle(.link)
                     }
-                    .buttonStyle(.link)
-                    .foregroundColor(.red)
                 }
                 
                 
@@ -141,7 +153,8 @@ struct TaskRow: View {
             //Task Update Field
             if taskChecked {
                 
-                TextField("Task Update", text: $updateContent, prompt: Text("Update"), axis: .vertical)
+                TextField("Task Update", text: $updateContent, prompt: Text("Add an update"), axis: .vertical)
+                    .frame(maxWidth: 400.0)
                     .focused($isUpdateFocused)
                     .onAppear {
                         currentUpdate = fetchExistingUpdate(for: task) ?? createNewUpdate(for: task)
@@ -153,8 +166,6 @@ struct TaskRow: View {
                         
                         // Update the Update's content whenever updateContent changes
                         currentUpdate?.content = newValue
-                        
-                        
                         
                         do {
                             print("update saved")
@@ -173,13 +184,17 @@ struct TaskRow: View {
                             taskChecked = Bool()
                         }
                     }
-                    .lineLimit(2...)
-                    .disabled(task.complete)
-                    .padding(.bottom, 8.0)
+                    //.disabled(task.complete)
+                    .textFieldStyle(PlainTextFieldStyle())
+                    .padding(.leading, 20.0)
                 
                 
             }
         }
+        .padding(8)
+        .background(taskChecked ? Color(red: 0.0, green: 0.0, blue: 0.0, opacity: 0.1) : Color.clear)
+        .cornerRadius(taskChecked ? 12.0 : 0.0)
+        .padding(.bottom, taskChecked ? 8.0 : 0)
         .onAppear {
             setTaskChecked()
         }

@@ -15,7 +15,7 @@ struct TaskListView: View {
     
     func deleteAllTasks() {
         guard let project = selectedProject.project else { return }
-        let tasks = allTasks.filter { $0.project == project }
+        let tasks = allTasks.filter { $0.project == project}
         for task in tasks {
             context.delete(task)
         }
@@ -35,38 +35,64 @@ struct TaskListView: View {
     
     private var filteredTasks: [Task] {
         guard let project = selectedProject.project else { return [] }
-        return allTasks.filter { $0.project == project }
+        return allTasks.filter { $0.project == project && $0.dateAdded ?? selectedDate.date <= selectedDate.date && $0.dateComplete ?? selectedDate.date >= selectedDate.date}
+    }
+    
+    var dateFormatter = Self.makeDateFormatter()
+    static func makeDateFormatter() -> DateFormatter {
+        let dateFormatter = DateFormatter()
+        
+        dateFormatter.dateStyle = .short
+        
+        return dateFormatter
     }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 5.0) {
+        VStack(alignment: .leading, spacing: 0.0) {
             
             
             ForEach(filteredTasks) { task in
                 TaskRow(task: task)
+                    .contextMenu(ContextMenu(menuItems: {
+                        Button("􀈑 Delete task", action: {
+                            context.delete(task)
+                            do {
+                                try context.save()
+                            } catch {
+                                // handle the Core Data error
+                                print("Failed to delete task: \(error)")
+                            }
+                        })
+                        Text(task.dateAdded != nil ? "Added on \(dateFormatter.string(from: task.dateAdded!))" : "No dateAdded found")
+                    }))
                 
             }
+            
+            Spacer(minLength: 5.0)
             
             //Adding Tasks
             if addingTask {
                 NewTaskView(addingTask: $addingTask)
+                .padding(.leading, 8)
             } else {
                 Button("Add a task") {
                     addingTask = true
                 }
                 .buttonStyle(.link)
+                .padding(.leading, 8)
             }
         }
+        
         Spacer(minLength: 16)
-        //        Button(action: {
-        //            deleteAllTasks()
-        //        }, label: {
-        //            Text("Delete All Tasks")
-        //        })
-        //        .background(
-        //            RoundedRectangle(cornerRadius: 8, style: .continuous)
-        //                .fill(Color.red)
-        //        )
+                Button(action: {
+                    deleteAllTasks()
+                }, label: {
+                    Text("Delete All Tasks")
+                })
+                .background(
+                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        .fill(Color.red)
+                )
     }
 }
 

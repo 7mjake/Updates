@@ -93,11 +93,12 @@ struct NewTaskView: View {
         .fixedSize()
         // press enter to save
         // press esc to cancel
-        
+        Spacer(minLength: 8)
         HStack {
             Button("Save") {
                 addingTask = false
                 let task = Task(context: context)
+                task.dateAdded = selectedDate.date
                 task.id = UUID()
                 task.name = newTask
                 task.complete = false
