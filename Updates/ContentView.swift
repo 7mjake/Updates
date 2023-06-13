@@ -49,7 +49,7 @@ struct ContentView: View {
                     })
                     Button(action: {
                         if let nextDay = Calendar.current.date(byAdding: .day, value: 1, to: selectedDate.date) {
-                            selectedDate.date = nextDay
+                                selectedDate.date = nextDay
                         }
                     }, label: {
                         Image(systemName: "chevron.right")
@@ -61,15 +61,15 @@ struct ContentView: View {
             }
             ToolbarItem {
                 HStack {
-                    Button(action: {
-                        selectedDate.date = Date.now
-                        print("button works")
-                    }, label: {
-                        Text("Today")
-                            .fontWeight(.bold)
-                            .foregroundColor(Color.blue)
-                    })
-                    .disabled(Calendar.current.isDateInToday(selectedDate.date))
+                    let isToday = Calendar.current.isDateInToday(selectedDate.date)
+                    if !isToday {
+                        Button(action: {
+                            selectedDate.date = Date.now
+                        }) {
+                            Text("Today")
+                                .foregroundColor(Color.blue)
+                        }
+                    }
                     
                     Button(action: {
                         isDatePickerPresented.toggle()
