@@ -18,6 +18,7 @@
 		963558252A2E3F5900109667 /* ProjectsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963558242A2E3F5900109667 /* ProjectsView.swift */; };
 		963558272A2E409A00109667 /* AddProjectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963558262A2E409A00109667 /* AddProjectView.swift */; };
 		963558292A2E439200109667 /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963558282A2E439200109667 /* DataController.swift */; };
+		963AD7022A3A46E30035EF4C /* ProjectStatusSections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963AD7012A3A46E30035EF4C /* ProjectStatusSections.swift */; };
 		963E8C7E2A361375003DEBFE /* SelectedDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963E8C7D2A361375003DEBFE /* SelectedDate.swift */; };
 		963E8C802A3662F0003DEBFE /* NotesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963E8C7F2A3662F0003DEBFE /* NotesView.swift */; };
 		967E4F5E2A323144005D1AEE /* ProjectUpdateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 967E4F5D2A323144005D1AEE /* ProjectUpdateView.swift */; };
@@ -62,6 +63,7 @@
 		963558242A2E3F5900109667 /* ProjectsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectsView.swift; sourceTree = "<group>"; };
 		963558262A2E409A00109667 /* AddProjectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddProjectView.swift; sourceTree = "<group>"; };
 		963558282A2E439200109667 /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
+		963AD7012A3A46E30035EF4C /* ProjectStatusSections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectStatusSections.swift; sourceTree = "<group>"; };
 		963E8C7D2A361375003DEBFE /* SelectedDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedDate.swift; sourceTree = "<group>"; };
 		963E8C7F2A3662F0003DEBFE /* NotesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesView.swift; sourceTree = "<group>"; };
 		967E4F5D2A323144005D1AEE /* ProjectUpdateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectUpdateView.swift; sourceTree = "<group>"; };
@@ -179,6 +181,7 @@
 				96D180AA2A33E10000FF9899 /* SelectedProject.swift */,
 				963E8C7D2A361375003DEBFE /* SelectedDate.swift */,
 				96AE14DB2A311E8900AFC5A3 /* ProjectAttributes.swift */,
+				963AD7012A3A46E30035EF4C /* ProjectStatusSections.swift */,
 				963558212A2E324E00109667 /* Model.xcdatamodeld */,
 			);
 			path = Model;
@@ -323,6 +326,7 @@
 				963557F92A2E31CC00109667 /* ContentView.swift in Sources */,
 				963557F72A2E31CC00109667 /* UpdatesApp.swift in Sources */,
 				963E8C7E2A361375003DEBFE /* SelectedDate.swift in Sources */,
+				963AD7022A3A46E30035EF4C /* ProjectStatusSections.swift in Sources */,
 				96F6436D2A37D3A800FE4A8E /* NewTaskView.swift in Sources */,
 				967E4F5E2A323144005D1AEE /* ProjectUpdateView.swift in Sources */,
 				96D180AB2A33E10000FF9899 /* SelectedProject.swift in Sources */,

@@ -29,10 +29,10 @@ struct projectMenu: View {
     var project: Project
     @State var isEditProjectViewPresented = false
     @State private var selectedEditProject: Project?
-
+    
     @Environment(\.managedObjectContext) private var context: NSManagedObjectContext
-
-
+    
+    
     
     var body: some View {
         Button("􀈊 Edit project") {
@@ -47,12 +47,12 @@ struct projectMenu: View {
         
         Button("􀈑 Delete project") {
             context.delete(project)
-                do {
-                    try context.save()
-                } catch {
-                    // handle the Core Data error
-                    print("Failed to delete task: \(error)")
-                }
+            do {
+                try context.save()
+            } catch {
+                // handle the Core Data error
+                print("Failed to delete task: \(error)")
+            }
         }
     }
 }
@@ -63,77 +63,60 @@ struct ProjectsView: View {
     @State var isAddProjectViewPresented = false
     @Environment(\.managedObjectContext) private var context: NSManagedObjectContext
     
-    @FetchRequest(
-        sortDescriptors: [SortDescriptor(\.name)],
-        predicate: NSPredicate(format: "status = %d",argumentArray: [ProjectStatus.inProgess.rawValue]))
-    var inProgressProjects: FetchedResults<Project>
+    private func moveProject(from source: IndexSet, to destination: Int, in status: Int16) {
+        withAnimation {
+            let sourceProject = projects[status][source.first!]
+            let newStatus = ProjectStatusSections(rawValue: status)?.next() ?? ProjectStatusSections.done
+            sourceProject.status = newStatus.rawValue
+
+            do {
+                try context.save()
+            } catch {
+                print("Failed to update project status: \(error)")
+            }
+        }
+    }
+
     
-    @FetchRequest(
-        sortDescriptors: [SortDescriptor(\.name)],
-        predicate: NSPredicate(format: "status = %d",argumentArray: [ProjectStatus.notStarted.rawValue]))
-    var notStartedProjects: FetchedResults<Project>
+    @SectionedFetchRequest(
+        sectionIdentifier: \Project.status,
+        sortDescriptors: [SortDescriptor(\Project.name)],
+        predicate: nil
+    ) private var projects: SectionedFetchResults<Int16, Project>
     
-    @FetchRequest(
-        sortDescriptors: [SortDescriptor(\.name)],
-        predicate: NSPredicate(format: "status = %d",argumentArray: [ProjectStatus.done.rawValue]))
-    var doneProjects: FetchedResults<Project>
     
     var body: some View {
         VStack {
             
-            List (selection: $selectedProject.project) {
-                Section("􀧒 In Progress") {
-                    ForEach(inProgressProjects) { project in
-                       ProjectRow(project: project)
-                            .tag(project)
-                        .onTapGesture {
-                                    selectedProject.project = project
-                                }
-                        .contextMenu(menuItems: {
-                            
-                            projectMenu(project: project)
-                        })
-                    }
-                }
-                Section("􀓞 Not Started") {
-                    ForEach(notStartedProjects) { project in
-                        ProjectRow(project: project)
-                            .tag(project)
-                        .onTapGesture {
-                                    selectedProject.project = project
-                                }
-                        .contextMenu(menuItems: {
-                            
-                            projectMenu(project: project)
-                        })
-                        
-                    }
-                    
-                }
-                Section("􀁣 Done") {
-                    ForEach(doneProjects) { project in
-                        ProjectRow(project: project)
-                            .tag(project)
-                        .onTapGesture {
-                                    selectedProject.project = project
-                                }
-                        .contextMenu(menuItems: {
-                            
-                            projectMenu(project: project)
-                        })
-                    }
-                }
+            List {
                 
+                ForEach(projects) { section in
+                    Section(header: Text(ProjectStatusSections.title(for: section.id))) {
+                        ForEach(section) { project in
+                            ProjectRow(project: project)
+                                .tag(project)
+                                .onTapGesture {
+                                    selectedProject.project = project
+                                }
+                                .contextMenu(menuItems: {
+                                    projectMenu(project: project)
+                                })
+                        }
+                    }
+                }
+                .onMove { source, destination in
+                    moveProject(from: source, to: destination, in: section.id)
+                }
             }
+            
         }
         
         //Select first project in list as initial selectedProject.project
         .onAppear {
-            if let firstProject = inProgressProjects.first ?? notStartedProjects.first ?? doneProjects.first {
-                selectedProject.project = firstProject
-            }
+            //if let firstProject = inProgressProjects.first ?? notStartedProjects.first ?? doneProjects.first {
+            //selectedProject.project = firstProject
         }
-
+        
         Button("Add a project") {
             isAddProjectViewPresented = true
         }
@@ -144,6 +127,8 @@ struct ProjectsView: View {
                 .frame(minWidth: 300.0, minHeight: 300.0)
         }
     }
+
+
 }
 
 struct ProjectsView_Previews: PreviewProvider {
