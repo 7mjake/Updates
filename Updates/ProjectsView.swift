@@ -63,32 +63,16 @@ struct ProjectsView: View {
     @State var isAddProjectViewPresented = false
     @Environment(\.managedObjectContext) private var context: NSManagedObjectContext
     
-    private func moveProject(from source: IndexSet, to destination: Int, in status: Int16) {
-        withAnimation {
-            let sourceProject = projects[status][source.first!]
-            let newStatus = ProjectStatusSections(rawValue: status)?.next() ?? ProjectStatusSections.done
-            sourceProject.status = newStatus.rawValue
-
-            do {
-                try context.save()
-            } catch {
-                print("Failed to update project status: \(error)")
-            }
-        }
-    }
-
-    
     @SectionedFetchRequest(
         sectionIdentifier: \Project.status,
         sortDescriptors: [SortDescriptor(\Project.name)],
         predicate: nil
     ) private var projects: SectionedFetchResults<Int16, Project>
     
-    
     var body: some View {
         VStack {
             
-            List {
+            List(selection: $selectedProject.project) {
                 
                 ForEach(projects) { section in
                     Section(header: Text(ProjectStatusSections.title(for: section.id))) {
@@ -104,18 +88,17 @@ struct ProjectsView: View {
                         }
                     }
                 }
-                .onMove { source, destination in
-                    moveProject(from: source, to: destination, in: section.id)
-                }
             }
-            
         }
         
         //Select first project in list as initial selectedProject.project
         .onAppear {
-            //if let firstProject = inProgressProjects.first ?? notStartedProjects.first ?? doneProjects.first {
-            //selectedProject.project = firstProject
+            if let firstSection = projects.first(where: { !$0.isEmpty }),
+               let firstProject = firstSection.first {
+                selectedProject.project = firstProject
+            }
         }
+
         
         Button("Add a project") {
             isAddProjectViewPresented = true

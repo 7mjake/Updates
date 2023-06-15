@@ -28,15 +28,3 @@ enum ProjectStatusSections: Int16, CaseIterable {
     }
 }
 
-extension ProjectStatusSections {
-    func next() -> ProjectStatusSections? {
-        switch self {
-        case .inProgress:
-            return .notStarted
-        case .notStarted:
-            return .done
-        case .done:
-            return .inProgress
-        }
-    }
-}
