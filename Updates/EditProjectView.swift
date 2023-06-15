@@ -12,6 +12,7 @@ struct EditProjectView: View {
     @State var projectName = ""
     @State var projectPriority = ProjectPriority.p1
     @State var projectStatus = ProjectStatus.notStarted
+    @ObservedObject var project: Project
     @Environment(\.dismiss) private var dismiss
     @Environment(\.managedObjectContext) private var context: NSManagedObjectContext
     
@@ -62,8 +63,8 @@ struct EditProjectView: View {
     }
 }
 
-struct EditProjectView_Previews: PreviewProvider {
-    static var previews: some View {
-        EditProjectView()
-    }
-}
+//struct EditProjectView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        EditProjectView()
+//    }
+//}

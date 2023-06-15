@@ -27,8 +27,7 @@ struct ProjectRow: View {
 struct projectMenu: View {
     
     var project: Project
-    @State var isEditProjectViewPresented = false
-    @State private var selectedEditProject: Project?
+    @Binding var isEditProjectViewPresented: Bool
     
     @Environment(\.managedObjectContext) private var context: NSManagedObjectContext
     
@@ -36,13 +35,7 @@ struct projectMenu: View {
     
     var body: some View {
         Button("􀈊 Edit project") {
-            self.selectedEditProject = project
             isEditProjectViewPresented = true
-        }
-        .sheet(isPresented: $isEditProjectViewPresented) {
-            //EditProjectView(project: project)
-            EditProjectView()
-                .frame(minWidth: 300.0, minHeight: 300.0)
         }
         
         Button("􀈑 Delete project") {
@@ -61,6 +54,7 @@ struct ProjectsView: View {
     
     @EnvironmentObject var selectedProject: SelectedProject
     @State var isAddProjectViewPresented = false
+    @State var isEditProjectViewPresented = false
     @Environment(\.managedObjectContext) private var context: NSManagedObjectContext
     
     @SectionedFetchRequest(
@@ -83,11 +77,16 @@ struct ProjectsView: View {
                                     selectedProject.project = project
                                 }
                                 .contextMenu(menuItems: {
-                                    projectMenu(project: project)
+                                    projectMenu(project: project, isEditProjectViewPresented: $isEditProjectViewPresented)
                                 })
                         }
                     }
                 }
+            }
+            .sheet(isPresented: $isEditProjectViewPresented) {
+                EditProjectView()
+                        .frame(minWidth: 300.0, minHeight: 300.0)
+                
             }
         }
         
