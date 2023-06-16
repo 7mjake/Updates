@@ -9,19 +9,21 @@ import SwiftUI
 
 struct EditProjectView: View {
     
-    let project: Project
-    @State var projectName = project.name
-    @State var projectPriority: Int16
-    @State var projectStatus: Int16
+    @ObservedObject var project: Project
+    @State var projectName: String
+    @State var projectPriority: ProjectPriority
+    @State var projectStatus: ProjectStatusSections
     @Environment(\.dismiss) private var dismiss
     @Environment(\.managedObjectContext) private var context: NSManagedObjectContext
     
-//    init(project: Project) {
-//        self.project = project
-//        self.projectName = project.name ?? ""
-//        self.projectPriority = project.priority
-//        self.projectStatus = project.status
-//    }
+    init(project: Project) {
+        self.project = project
+        self._projectName = State(initialValue: project.name ?? "")
+        self._projectPriority = State(initialValue: ProjectPriority(rawValue: project.priority)!)
+        self._projectStatus = State(initialValue: ProjectStatusSections(rawValue: project.status)!)
+    }
+
+
     
     var body: some View {
         VStack (spacing: 16) {
@@ -37,9 +39,9 @@ struct EditProjectView: View {
             }
             .pickerStyle(.segmented)
             Picker("Status", selection: $projectStatus) {
-                Text("In Progress").tag(ProjectStatus.inProgess)
-                Text("Not Started").tag(ProjectStatus.notStarted)
-                Text("Done").tag(ProjectStatus.done)
+                ForEach(ProjectStatusSections.allCases, id: \.self) { status in
+                                Text(status.title).tag(status)
+                            }
             }
             Spacer()
             HStack {
@@ -48,12 +50,11 @@ struct EditProjectView: View {
                 }
                 .buttonStyle(.plain)
                 Spacer()
-                Button("Done") {
-                    
-                    let project = Project(context: context)
+                Button("Save") {
+
                     project.name = projectName
-//                    project.priority = projectPriority.rawValue
-//                    project.status = projectStatus.rawValue
+                    project.priority = projectPriority.rawValue
+                    project.status = projectStatus.rawValue
                     
                     do {
                         try context.save()
@@ -63,6 +64,7 @@ struct EditProjectView: View {
                     
                    dismiss()
                 }
+                .buttonStyle(.borderedProminent)
                 .disabled(projectName.isEmpty)
             }
         }
