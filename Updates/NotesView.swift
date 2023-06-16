@@ -18,7 +18,6 @@ struct NotesView: View {
     
     func fetchExistingNote(for project: SelectedProject) -> Note? {
         guard let project = selectedProject.project else {
-                print("No project selected")
                 return nil
             }
         
@@ -89,7 +88,6 @@ struct NotesView: View {
             .onAppear {
                 currentNote = fetchExistingNote(for: selectedProject)
                 noteContent = currentNote?.content ?? ""
-                print("on appear")
             }
             .onChange(of: noteContent) { newValue in
                 let hasCurrentNote = currentNote != nil

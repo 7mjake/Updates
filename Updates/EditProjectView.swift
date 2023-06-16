@@ -9,12 +9,19 @@ import SwiftUI
 
 struct EditProjectView: View {
     
-    @State var projectName = ""
-    @State var projectPriority = ProjectPriority.p1
-    @State var projectStatus = ProjectStatus.notStarted
-    @ObservedObject var project: Project
+    let project: Project
+    @State var projectName = project.name
+    @State var projectPriority: Int16
+    @State var projectStatus: Int16
     @Environment(\.dismiss) private var dismiss
     @Environment(\.managedObjectContext) private var context: NSManagedObjectContext
+    
+//    init(project: Project) {
+//        self.project = project
+//        self.projectName = project.name ?? ""
+//        self.projectPriority = project.priority
+//        self.projectStatus = project.status
+//    }
     
     var body: some View {
         VStack (spacing: 16) {
@@ -45,8 +52,8 @@ struct EditProjectView: View {
                     
                     let project = Project(context: context)
                     project.name = projectName
-                    project.priority = projectPriority.rawValue
-                    project.status = projectStatus.rawValue
+//                    project.priority = projectPriority.rawValue
+//                    project.status = projectStatus.rawValue
                     
                     do {
                         try context.save()

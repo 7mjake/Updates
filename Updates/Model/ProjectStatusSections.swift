@@ -28,3 +28,20 @@ enum ProjectStatusSections: Int16, CaseIterable {
     }
 }
 
+// Look up how to store and retrieve enums in core data that are backed by Ints
+//extension ProjectStatus {
+//    static func title(for value: Int16) -> String {
+//        return Self(rawValue: value)?.title ?? "Unknown"
+//    }
+//
+//    var title: String {
+//        switch self {
+//            case .inProgress:
+//                return "􀧒 In Progress"
+//            case .notStarted:
+//                return "􀓞 Not Started"
+//            case .done:
+//                return "􀁣 Done"
+//        }
+//    }
+//}
