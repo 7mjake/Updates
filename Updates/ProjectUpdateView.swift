@@ -19,8 +19,7 @@ struct ProjectUpdateView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
                     Text(selectedProject.project?.name ?? "No project selected")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
+                        .font(.system(size: 48, weight: .bold))
                     Spacer(minLength: 24)
                     Text("What did you work on today?")
                         .font(.title2)
@@ -57,15 +56,23 @@ struct ProjectUpdateView: View {
             
             Divider()
             HStack {
-                Button("See all **Dairy Queen** updates") {
+                Button("See all \(selectedProject.project?.name ?? "Project") updates") {
                     //Create a new task
                 }
                 .buttonStyle(.link)
                 Spacer()
-                Button("Mark **Dairy Queen** as done") {
-                    //Create a new task
+                if selectedProject.project?.status != 2 {
+                    Button("Mark \(selectedProject.project?.name ?? "Project") as **Done**") {
+                        selectedProject.project?.status = 2
+                        do {
+                            try context.save()
+                        } catch {
+                            // handle the Core Data error
+                            print("Failed to delete task: \(error)")
+                        }
+                    }
+                    .buttonStyle(.link)
                 }
-                .buttonStyle(.link)
             }
             .padding(EdgeInsets(top: 16, leading: 32, bottom: 16, trailing: 32))
         }

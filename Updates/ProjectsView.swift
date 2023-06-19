@@ -8,18 +8,58 @@
 import SwiftUI
 
 struct ProjectRow: View {
-    var project: Project
+    @ObservedObject var project: Project
+    @EnvironmentObject var selectedDate: SelectedDate
+    @EnvironmentObject var selectedProject: SelectedProject
+    @Environment(\.managedObjectContext) private var context: NSManagedObjectContext
+    
+    private func activeTaskCount(for project: Project, on date: Date) -> Int {
+           let request: NSFetchRequest<Task> = Task.fetchRequest()
+           
+           // Set the predicate.
+        let predicate = NSPredicate(format: "project == %@ && complete == false", project)
+           request.predicate = predicate
+           
+           do {
+               // Get the count for the tasks in the project on the selected date.
+               let count = try context.count(for: request)
+               return count
+           } catch {
+               print("Error fetching task count: \(error)")
+               return 0
+           }
+       }
     
     var body: some View {
         HStack(alignment: .center, spacing: 4) {
+            let taskCount = activeTaskCount(for: project, on: selectedDate.date)
+            let isProjectSelected = project == selectedProject.project
+            
+            if project.priority == 1 {
+                Image(systemName: "star.fill")
+                    .foregroundColor(isProjectSelected ? Color.primary: Color.accentColor)
+            }
+            
             Text(project.name ?? "")
                 .font(.title2)
+                .fontWeight(project.priority == 1 ? .bold : .regular)
             
             Spacer()
-            Text("P" + String(project.priority))
-                .font(.body)
-                .fontWeight(.black)
-                .opacity(0.5)
+            
+//            Text("P" + String(project.priority))
+            if taskCount > 0 {
+                Text(String(taskCount))
+                    .fontWeight(.bold)
+                    .foregroundColor(isProjectSelected ? Color.white : Color.clear)
+                    .scaleEffect(isProjectSelected ? 1.0 : 0.1)
+                .frame(width: isProjectSelected ? 24.0 : 12.0, height: isProjectSelected ? 24.0 : 12.0)
+                .background(
+                    Circle()
+                        .fill(Color.accentColor)
+                )
+                .padding(isProjectSelected ? 0.0 : 6.0)
+                .animation(.easeInOut(duration: 0.15), value: isProjectSelected)
+            }
         }
     }
 }
@@ -43,7 +83,7 @@ struct ProjectMenu: View {
                 try context.save()
             } catch {
                 // handle the Core Data error
-                print("Failed to delete task: \(error)")
+                print("Failed to delete project: \(error)")
             }
         }
     }
@@ -59,7 +99,11 @@ struct ProjectsView: View {
     
     @SectionedFetchRequest(
         sectionIdentifier: \Project.status,
-        sortDescriptors: [SortDescriptor(\Project.name)],
+        sortDescriptors: [
+            SortDescriptor(\Project.status),
+            SortDescriptor(\Project.priority),
+            SortDescriptor(\Project.name)
+        ],
         predicate: nil
     ) private var projects: SectionedFetchResults<Int16, Project>
     

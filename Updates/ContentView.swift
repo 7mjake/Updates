@@ -28,6 +28,7 @@ struct ContentView: View {
         NavigationSplitView {
             ProjectsView()
                 .environmentObject(selectedProject)
+                .environmentObject(selectedDate)
         } detail: {
             VStack (spacing: 0) {
                 //CustomToolbar()
@@ -56,7 +57,7 @@ struct ContentView: View {
                     })
                     Text(dateFormatter.string(from: selectedDate.date))
                         .font(.largeTitle)
-                        .fontWeight(.heavy)
+                        .fontWeight(.semibold)
                 }
             }
             ToolbarItem {

@@ -18,7 +18,7 @@ struct UpdatesApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .frame(minWidth: 600.0, minHeight: 400.0)
+                .frame(minWidth: 800.0, minHeight: 400.0)
                 .environment(\.managedObjectContext,
                               dataController.container.viewContext)
                 .environmentObject(dataController)
