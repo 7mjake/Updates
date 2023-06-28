@@ -63,6 +63,17 @@ struct TaskListView: View {
                                 print("Failed to delete task: \(error)")
                             }
                         })
+                        
+                        Button("􀈊 Edit task", action: {
+                            //context.delete(task)
+                            do {
+                                try context.save()
+                            } catch {
+                                // handle the Core Data error
+                                print("Failed to delete task: \(error)")
+                            }
+                        })
+                        
                         Text(task.dateAdded != nil ? "Added on \(dateFormatter.string(from: task.dateAdded!))" : "No dateAdded found")
                     }))
                 
