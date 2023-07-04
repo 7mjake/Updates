@@ -17,6 +17,8 @@ struct TaskRow: View {
     @State private var currentUpdate: Update?
     @State var taskChecked = Bool()
     @FocusState private var isUpdateFocused: Bool
+    @State private var currentTask = ""
+    @FocusState var isTaskFocused: Bool
 
     
     func fetchExistingUpdate(for task: Task) -> Update? {
@@ -86,8 +88,26 @@ struct TaskRow: View {
                 
                 //Task checkbox
                 Toggle(isOn: $taskChecked, label: {
-                    Text(task.name ?? "")
+                    TextField("SelectedTask", text: $currentTask)
+                        .textFieldStyle(PlainTextFieldStyle())
+                        .focused($isTaskFocused)
                         .fontWeight(.heavy)
+                        .foregroundStyle(isTaskFocused ? .secondary : .primary)
+                        .fixedSize()
+                        .onAppear {
+                            currentTask = task.name ?? "no task name found"
+                        }
+                        .onChange(of: currentTask) { newValue in
+                            
+                            task.name = currentTask
+                            
+                            do {
+                                print("task name saved")
+                                try context.save()
+                            } catch {
+                                print("Failed to save task name: \(error)")
+                            }
+                        }
                 })
                 .disabled(task.complete)
                 .onChange(of: taskChecked) { newValue in
