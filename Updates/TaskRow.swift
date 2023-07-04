@@ -19,7 +19,9 @@ struct TaskRow: View {
     @FocusState private var isUpdateFocused: Bool
     @State private var currentTask = ""
     @FocusState var isTaskFocused: Bool
-
+    @State private var hover = false
+    @State private var isTaskMenuPresented = false
+    
     
     func fetchExistingUpdate(for task: Task) -> Update? {
         let fetchRequest: NSFetchRequest<Update> = Update.fetchRequest()
@@ -88,7 +90,7 @@ struct TaskRow: View {
                 
                 //Task checkbox
                 Toggle(isOn: $taskChecked, label: {
-                    TextField("SelectedTask", text: $currentTask)
+                    TextField("Task name", text: $currentTask)
                         .textFieldStyle(PlainTextFieldStyle())
                         .focused($isTaskFocused)
                         .fontWeight(.heavy)
@@ -126,9 +128,28 @@ struct TaskRow: View {
                     }
                 }
                 
-                if task.dueDate != nil {
-                    Text(dateFormatter.string(from: task.dueDate!))
-                        .foregroundStyle(Calendar.current.startOfDay(for: task.dueDate!) <= Calendar.current.startOfDay(for: selectedDate.date) ? .red : .gray)
+
+                DatePickerView(task: task, hovering: $hover)
+                
+                if hover {
+                    
+                    Menu("") {
+                        
+                        Button("􀈑 Delete task", action: {
+                            context.delete(task)
+                            do {
+                                try context.save()
+                            } catch {
+                                // handle the Core Data error
+                                print("Failed to delete task: \(error)")
+                            }
+                        })
+                        
+                        Text(task.dateAdded != nil ? "􀉉 Added on \(dateFormatter.string(from: task.dateAdded!))" : "No dateAdded found")
+                        
+                    }
+                    .menuStyle(.borderlessButton)
+                    .fixedSize()
                 }
                 
                 
@@ -142,7 +163,7 @@ struct TaskRow: View {
                         task.dateComplete = selectedDate.date
                     }
                     .buttonStyle(.link)
-                     
+                    
                 } else if task.complete{
                     HStack(spacing: 0.0) {
                         
@@ -168,6 +189,9 @@ struct TaskRow: View {
                 
                 
                 
+            }
+            .onHover { over in
+                hover = over
             }
             
             //Task Update Field
@@ -204,7 +228,7 @@ struct TaskRow: View {
                             taskChecked = Bool()
                         }
                     }
-                    //.disabled(task.complete)
+                //.disabled(task.complete)
                     .textFieldStyle(PlainTextFieldStyle())
                     .padding(.leading, 20.0)
                 

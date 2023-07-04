@@ -82,16 +82,23 @@ struct TaskListView: View {
             Spacer(minLength: 5.0)
             
             //Adding Tasks
-            if addingTask {
-                NewTaskView(addingTask: $addingTask)
-                .padding(.leading, 8)
-            } else {
                 Button("Add a task") {
-                    addingTask = true
+                    let task = Task(context: context)
+                    task.dateAdded = selectedDate.date
+                    task.id = UUID()
+                    task.name = ""
+                    task.complete = false
+                    task.project = selectedProject.project
+                    
+                    do {
+                        try context.save()
+                    } catch {
+                        print(error)
+                    }
                 }
                 .buttonStyle(.link)
                 .padding(.leading, 8)
-            }
+            
         }
         
 //        Spacer(minLength: 16)
