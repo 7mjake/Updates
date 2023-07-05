@@ -18,7 +18,8 @@ struct TaskRow: View {
     @State var taskChecked = Bool()
     @FocusState private var isUpdateFocused: Bool
     @State private var currentTask = ""
-    @FocusState var isTaskFocused: Bool
+    @FocusState private var isTaskFocused: Bool
+    @Binding var isGlobalTaskFocused: Bool
     @State private var hover = false
     @State private var isTaskMenuPresented = false
     
@@ -98,6 +99,16 @@ struct TaskRow: View {
                         .fixedSize()
                         .onAppear {
                             currentTask = task.name ?? "no task name found"
+                        }
+                        .onChange(of: isTaskFocused) { _ in
+                            if isTaskFocused == true && isGlobalTaskFocused == false {
+                                isGlobalTaskFocused = true
+                            }
+                        }
+                        .onChange(of: isGlobalTaskFocused) { _ in
+                            if isGlobalTaskFocused == false && isTaskFocused == true {
+                                isTaskFocused = false
+                            }
                         }
                         .onChange(of: currentTask) { newValue in
                             

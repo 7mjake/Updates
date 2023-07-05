@@ -12,6 +12,7 @@ struct TaskListView: View {
     @EnvironmentObject var selectedProject: SelectedProject
     @EnvironmentObject var selectedDate: SelectedDate
     @State var addingTask = false
+    @Binding var isGlobalTaskFocused: Bool
     
     func deleteAllTasks() {
         guard let project = selectedProject.project else { return }
@@ -52,31 +53,7 @@ struct TaskListView: View {
             
             
             ForEach(filteredTasks) { task in
-                TaskRow(task: task)
-                    .contextMenu(ContextMenu(menuItems: {
-                        Button("􀈑 Delete task", action: {
-                            context.delete(task)
-                            do {
-                                try context.save()
-                            } catch {
-                                // handle the Core Data error
-                                print("Failed to delete task: \(error)")
-                            }
-                        })
-                        
-                        Button("􀈊 Edit task", action: {
-                            //context.delete(task)
-                            do {
-                                try context.save()
-                            } catch {
-                                // handle the Core Data error
-                                print("Failed to delete task: \(error)")
-                            }
-                        })
-                        
-                        Text(task.dateAdded != nil ? "Added on \(dateFormatter.string(from: task.dateAdded!))" : "No dateAdded found")
-                    }))
-                
+                TaskRow(task: task, isGlobalTaskFocused: $isGlobalTaskFocused)
             }
             
             Spacer(minLength: 5.0)
@@ -114,10 +91,10 @@ struct TaskListView: View {
     }
 }
 
-struct TaskListView_Previews: PreviewProvider {
-    static var previews: some View {
-        TaskListView()
-    }
-}
+//struct TaskListView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        TaskListView()
+//    }
+//}
 
 

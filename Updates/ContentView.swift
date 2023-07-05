@@ -34,7 +34,7 @@ struct ContentView: View {
                 //CustomToolbar()
                 //Divider()
                 
-                ProjectUpdateView()
+                ProjectUpdateView(isGlobalTaskFocused: false)
                     .environmentObject(selectedDate)
             }
         }

@@ -13,6 +13,7 @@ struct ProjectUpdateView: View {
     @EnvironmentObject var selectedProject: SelectedProject
     @EnvironmentObject var selectedDate: SelectedDate
     @FocusState var isNotesFocused: Bool
+    @State var isGlobalTaskFocused: Bool
 
     var body: some View {
         VStack(spacing: 0) {
@@ -27,7 +28,7 @@ struct ProjectUpdateView: View {
                     
                     Spacer(minLength: 8)
                     
-                    TaskListView()
+                    TaskListView(isGlobalTaskFocused: $isGlobalTaskFocused)
                         
                     Spacer(minLength: 24)
                     
@@ -78,13 +79,14 @@ struct ProjectUpdateView: View {
         }
         .onTapGesture {
             isNotesFocused = false
+            isGlobalTaskFocused = false
         }
     }
 }
 
 
-struct ProjectUpdateView_Previews: PreviewProvider {
-    static var previews: some View {
-        ProjectUpdateView()
-    }
-}
+//struct ProjectUpdateView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ProjectUpdateView()
+//    }
+//}
