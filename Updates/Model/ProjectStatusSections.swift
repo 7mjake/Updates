@@ -19,9 +19,9 @@ enum ProjectStatusSections: Int16, CaseIterable {
     var title: String {
         switch self {
             case .inProgress:
-                return "􀧒 In Progress"
+                return "􁹧 In Progress"
             case .notStarted:
-                return "􀓞 Not Started"
+                return "􁅃 Not Started"
             case .done:
                 return "􀁣 Done"
         }

@@ -100,10 +100,25 @@ struct TaskRow: View {
                         .onAppear {
                             currentTask = task.name ?? "no task name found"
                         }
+                        .onChange(of: selectedDate.date) { _ in
+                                isTaskFocused = false
+                        }
                         .onChange(of: isTaskFocused) { _ in
+                            
                             if isTaskFocused == true && isGlobalTaskFocused == false {
                                 isGlobalTaskFocused = true
                             }
+                            
+                            if isTaskFocused == false && currentTask.isEmpty {
+                                context.delete(task)
+                                do {
+                                    try context.save()
+                                } catch {
+                                    // handle the Core Data error
+                                    print("Failed to delete task: \(error)")
+                                }
+                            }
+                            
                         }
                         .onChange(of: isGlobalTaskFocused) { _ in
                             if isGlobalTaskFocused == false && isTaskFocused == true {
