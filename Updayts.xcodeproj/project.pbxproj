@@ -49,15 +49,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		963557F32A2E31CC00109667 /* Updates.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Updates.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		963557F32A2E31CC00109667 /* Updayts.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Updayts.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		963557F62A2E31CC00109667 /* UpdatesApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatesApp.swift; sourceTree = "<group>"; };
 		963557F82A2E31CC00109667 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		963557FA2A2E31D000109667 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Updates/Assets.xcassets; sourceTree = SOURCE_ROOT; };
 		963557FD2A2E31D000109667 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		963557FF2A2E31D000109667 /* Updates.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Updates.entitlements; sourceTree = "<group>"; };
-		963558042A2E31D000109667 /* UpdatesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UpdatesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		963558042A2E31D000109667 /* UpdaytsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UpdaytsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		963558082A2E31D000109667 /* UpdatesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatesTests.swift; sourceTree = "<group>"; };
-		9635580E2A2E31D000109667 /* UpdatesUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UpdatesUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9635580E2A2E31D000109667 /* UpdaytsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UpdaytsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		963558122A2E31D000109667 /* UpdatesUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatesUITests.swift; sourceTree = "<group>"; };
 		963558142A2E31D000109667 /* UpdatesUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatesUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		963558222A2E324E00109667 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
@@ -115,9 +115,9 @@
 		963557F42A2E31CC00109667 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				963557F32A2E31CC00109667 /* Updates.app */,
-				963558042A2E31D000109667 /* UpdatesTests.xctest */,
-				9635580E2A2E31D000109667 /* UpdatesUITests.xctest */,
+				963557F32A2E31CC00109667 /* Updayts.app */,
+				963558042A2E31D000109667 /* UpdaytsTests.xctest */,
+				9635580E2A2E31D000109667 /* UpdaytsUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -193,9 +193,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		963557F22A2E31CC00109667 /* Updates */ = {
+		963557F22A2E31CC00109667 /* Updayts */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 963558182A2E31D000109667 /* Build configuration list for PBXNativeTarget "Updates" */;
+			buildConfigurationList = 963558182A2E31D000109667 /* Build configuration list for PBXNativeTarget "Updayts" */;
 			buildPhases = (
 				963557EF2A2E31CC00109667 /* Sources */,
 				963557F02A2E31CC00109667 /* Frameworks */,
@@ -205,14 +205,14 @@
 			);
 			dependencies = (
 			);
-			name = Updates;
+			name = Updayts;
 			productName = Updates;
-			productReference = 963557F32A2E31CC00109667 /* Updates.app */;
+			productReference = 963557F32A2E31CC00109667 /* Updayts.app */;
 			productType = "com.apple.product-type.application";
 		};
-		963558032A2E31D000109667 /* UpdatesTests */ = {
+		963558032A2E31D000109667 /* UpdaytsTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9635581B2A2E31D000109667 /* Build configuration list for PBXNativeTarget "UpdatesTests" */;
+			buildConfigurationList = 9635581B2A2E31D000109667 /* Build configuration list for PBXNativeTarget "UpdaytsTests" */;
 			buildPhases = (
 				963558002A2E31D000109667 /* Sources */,
 				963558012A2E31D000109667 /* Frameworks */,
@@ -223,14 +223,14 @@
 			dependencies = (
 				963558062A2E31D000109667 /* PBXTargetDependency */,
 			);
-			name = UpdatesTests;
+			name = UpdaytsTests;
 			productName = UpdatesTests;
-			productReference = 963558042A2E31D000109667 /* UpdatesTests.xctest */;
+			productReference = 963558042A2E31D000109667 /* UpdaytsTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		9635580D2A2E31D000109667 /* UpdatesUITests */ = {
+		9635580D2A2E31D000109667 /* UpdaytsUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9635581E2A2E31D000109667 /* Build configuration list for PBXNativeTarget "UpdatesUITests" */;
+			buildConfigurationList = 9635581E2A2E31D000109667 /* Build configuration list for PBXNativeTarget "UpdaytsUITests" */;
 			buildPhases = (
 				9635580A2A2E31D000109667 /* Sources */,
 				9635580B2A2E31D000109667 /* Frameworks */,
@@ -241,9 +241,9 @@
 			dependencies = (
 				963558102A2E31D000109667 /* PBXTargetDependency */,
 			);
-			name = UpdatesUITests;
+			name = UpdaytsUITests;
 			productName = UpdatesUITests;
-			productReference = 9635580E2A2E31D000109667 /* UpdatesUITests.xctest */;
+			productReference = 9635580E2A2E31D000109667 /* UpdaytsUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -269,7 +269,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 963557EE2A2E31CC00109667 /* Build configuration list for PBXProject "Updates" */;
+			buildConfigurationList = 963557EE2A2E31CC00109667 /* Build configuration list for PBXProject "Updayts" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -282,9 +282,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				963557F22A2E31CC00109667 /* Updates */,
-				963558032A2E31D000109667 /* UpdatesTests */,
-				9635580D2A2E31D000109667 /* UpdatesUITests */,
+				963557F22A2E31CC00109667 /* Updayts */,
+				963558032A2E31D000109667 /* UpdaytsTests */,
+				9635580D2A2E31D000109667 /* UpdaytsUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -362,12 +362,12 @@
 /* Begin PBXTargetDependency section */
 		963558062A2E31D000109667 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 963557F22A2E31CC00109667 /* Updates */;
+			target = 963557F22A2E31CC00109667 /* Updayts */;
 			targetProxy = 963558052A2E31D000109667 /* PBXContainerItemProxy */;
 		};
 		963558102A2E31D000109667 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 963557F22A2E31CC00109667 /* Updates */;
+			target = 963557F22A2E31CC00109667 /* Updayts */;
 			targetProxy = 9635580F2A2E31D000109667 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -556,7 +556,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Updates.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Updates";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Updayts.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Updayts";
 			};
 			name = Debug;
 		};
@@ -574,7 +574,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Updates.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Updates";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Updayts.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Updayts";
 			};
 			name = Release;
 		};
@@ -613,7 +613,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		963557EE2A2E31CC00109667 /* Build configuration list for PBXProject "Updates" */ = {
+		963557EE2A2E31CC00109667 /* Build configuration list for PBXProject "Updayts" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				963558162A2E31D000109667 /* Debug */,
@@ -622,7 +622,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		963558182A2E31D000109667 /* Build configuration list for PBXNativeTarget "Updates" */ = {
+		963558182A2E31D000109667 /* Build configuration list for PBXNativeTarget "Updayts" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				963558192A2E31D000109667 /* Debug */,
@@ -631,7 +631,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		9635581B2A2E31D000109667 /* Build configuration list for PBXNativeTarget "UpdatesTests" */ = {
+		9635581B2A2E31D000109667 /* Build configuration list for PBXNativeTarget "UpdaytsTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9635581C2A2E31D000109667 /* Debug */,
@@ -640,7 +640,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		9635581E2A2E31D000109667 /* Build configuration list for PBXNativeTarget "UpdatesUITests" */ = {
+		9635581E2A2E31D000109667 /* Build configuration list for PBXNativeTarget "UpdaytsUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				9635581F2A2E31D000109667 /* Debug */,
