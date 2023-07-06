@@ -14,6 +14,8 @@ struct TaskListView: View {
     @State var addingTask = false
     @Binding var isGlobalTaskFocused: Bool
     
+    // make a state prop for recentlyCreatedTask
+    
     func deleteAllTasks() {
         guard let project = selectedProject.project else { return }
         let tasks = allTasks.filter { $0.project == project}
@@ -53,7 +55,10 @@ struct TaskListView: View {
             
             
             ForEach(filteredTasks) { task in
+                // pass in should be selected if task is the currently selected task
                 TaskRow(task: task, isGlobalTaskFocused: $isGlobalTaskFocused)
+                
+                // You need to at some point nil out the value of the currently selected task
             }
             
             Spacer(minLength: 5.0)
@@ -66,6 +71,8 @@ struct TaskListView: View {
                     task.name = ""
                     task.complete = false
                     task.project = selectedProject.project
+                    
+                    // store this task as the recently created task
                     
                     do {
                         try context.save()

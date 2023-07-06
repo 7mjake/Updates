@@ -269,7 +269,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 963557EE2A2E31CC00109667 /* Build configuration list for PBXProject "Updayts" */;
+			buildConfigurationList = 963557EE2A2E31CC00109667 /* Build configuration list for PBXProject "MyUpdates" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -499,7 +499,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"Updates/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_CFBundleDisplayName = MyUpdates;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -527,7 +527,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"Updates/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_CFBundleDisplayName = MyUpdates;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -613,7 +613,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		963557EE2A2E31CC00109667 /* Build configuration list for PBXProject "Updayts" */ = {
+		963557EE2A2E31CC00109667 /* Build configuration list for PBXProject "MyUpdates" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				963558162A2E31D000109667 /* Debug */,

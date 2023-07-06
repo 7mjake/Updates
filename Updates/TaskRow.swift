@@ -18,11 +18,13 @@ struct TaskRow: View {
     @State var taskChecked = Bool()
     @FocusState private var isUpdateFocused: Bool
     @State private var currentTask = ""
-    @FocusState private var isTaskFocused: Bool
+    @FocusState var isTaskFocused: Bool
     @Binding var isGlobalTaskFocused: Bool
     @State private var hover = false
     @State private var isTaskMenuPresented = false
+
     
+    // Do some reading about automatically generated initilizers for classes and structs
     
     func fetchExistingUpdate(for task: Task) -> Update? {
         let fetchRequest: NSFetchRequest<Update> = Update.fetchRequest()
@@ -88,10 +90,13 @@ struct TaskRow: View {
         VStack(alignment: .leading, spacing: 4) {
             
             HStack {
-                
+                // GPT using combine debounce to save
                 //Task checkbox
                 Toggle(isOn: $taskChecked, label: {
                     TextField("Task name", text: $currentTask)
+                        .onSubmit {
+                            isTaskFocused = false
+                        }
                         .textFieldStyle(PlainTextFieldStyle())
                         .focused($isTaskFocused)
                         .fontWeight(.heavy)
