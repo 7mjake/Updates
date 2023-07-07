@@ -239,6 +239,17 @@ struct TaskRow: View {
                         updateContent = currentUpdate?.content ?? ""
                         
                     }
+                    .onChange(of: isUpdateFocused) { _ in
+                        
+                        if isUpdateFocused == true && isGlobalTaskFocused == false {
+                            isGlobalTaskFocused = true
+                        }
+                    }
+                    .onChange(of: isGlobalTaskFocused) { _ in
+                        if isGlobalTaskFocused == false && isUpdateFocused == true {
+                            isUpdateFocused = false
+                        }
+                    }
                     .onChange(of: updateContent) { newValue in
                         
                         
