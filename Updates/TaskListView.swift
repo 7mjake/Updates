@@ -13,6 +13,7 @@ struct TaskListView: View {
     @EnvironmentObject var selectedDate: SelectedDate
     @State var addingTask = false
     @Binding var isGlobalTaskFocused: Bool
+    @State var justCreatedTask: Task?
     
     // make a state prop for recentlyCreatedTask
     
@@ -56,7 +57,7 @@ struct TaskListView: View {
             
             ForEach(filteredTasks) { task in
                 // pass in should be selected if task is the currently selected task
-                TaskRow(task: task, isGlobalTaskFocused: $isGlobalTaskFocused)
+                TaskRow(task: task, isGlobalTaskFocused: $isGlobalTaskFocused, justCreatedTask: $justCreatedTask)
                 
                 // You need to at some point nil out the value of the currently selected task
             }
@@ -71,8 +72,7 @@ struct TaskListView: View {
                     task.name = ""
                     task.complete = false
                     task.project = selectedProject.project
-                    
-                    // store this task as the recently created task
+                    justCreatedTask = task
                     
                     do {
                         try context.save()

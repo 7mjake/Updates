@@ -22,6 +22,7 @@ struct TaskRow: View {
     @Binding var isGlobalTaskFocused: Bool
     @State private var hover = false
     @State private var isTaskMenuPresented = false
+    @Binding var justCreatedTask: Task?
 
     
     // Do some reading about automatically generated initilizers for classes and structs
@@ -103,6 +104,9 @@ struct TaskRow: View {
                         .fixedSize()
                         .onAppear {
                             currentTask = task.name ?? "no task name found"
+                            if task == justCreatedTask {
+                                isTaskFocused = true
+                            }
                         }
                         .onChange(of: selectedDate.date) { _ in
                                 isTaskFocused = false
