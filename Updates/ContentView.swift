@@ -14,6 +14,9 @@ struct ContentView: View {
     @State private var date = Date()
     @State private var isDatePickerPresented = false
     private var dateFormatter = Self.makeDateFormatter()
+    @State private var columnVisibility = NavigationSplitViewVisibility.detailOnly
+    @FetchRequest(entity: Project.entity(), sortDescriptors: [])
+    private var projects: FetchedResults<Project>
     
     static func makeDateFormatter() -> DateFormatter {
         let dateFormatter = DateFormatter()
@@ -25,10 +28,11 @@ struct ContentView: View {
     
     
     var body: some View {
-        NavigationSplitView {
+        NavigationSplitView(columnVisibility: $columnVisibility) {
             ProjectsView()
                 .environmentObject(selectedProject)
                 .environmentObject(selectedDate)
+                .frame(minWidth: 250.0)
         } detail: {
             VStack (spacing: 0) {
                 //CustomToolbar()
@@ -36,6 +40,20 @@ struct ContentView: View {
                 
                 ProjectUpdateView(isGlobalTaskFocused: false)
                     .environmentObject(selectedDate)
+            }
+        }
+        .onAppear {
+            if projects.isEmpty {
+                columnVisibility = .detailOnly
+            } else {
+                columnVisibility = .doubleColumn
+            }
+        }
+        .onChange(of: projects.count) { _ in
+            if projects.isEmpty {
+                columnVisibility = .detailOnly
+            } else {
+                columnVisibility = .doubleColumn
             }
         }
         .toolbar {

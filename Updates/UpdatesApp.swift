@@ -22,6 +22,7 @@ struct UpdatesApp: App {
                 .environment(\.managedObjectContext,
                               dataController.container.viewContext)
                 .environmentObject(dataController)
+            
         }
     }
 

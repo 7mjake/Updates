@@ -9,9 +9,10 @@ import SwiftUI
 
 struct AddProjectView: View {
     
+    @EnvironmentObject var selectedProject: SelectedProject
     @State var projectName = ""
     @State var projectPriority = ProjectPriority.p1
-    @State var projectStatus = ProjectStatus.notStarted
+    @State var projectStatus = ProjectStatusSections.inProgress
     @Environment(\.dismiss) private var dismiss
     @Environment(\.managedObjectContext) private var context: NSManagedObjectContext
     
@@ -29,9 +30,9 @@ struct AddProjectView: View {
             }
             .pickerStyle(.segmented)
             Picker("Status", selection: $projectStatus) {
-                Text("In Progress").tag(ProjectStatus.inProgess)
-                Text("Not Started").tag(ProjectStatus.notStarted)
-                Text("Done").tag(ProjectStatus.done)
+                ForEach(ProjectStatusSections.allCases, id: \.self) { status in
+                                Text(status.title).tag(status)
+                            }
             }
             Spacer()
             HStack {
@@ -40,12 +41,13 @@ struct AddProjectView: View {
                 }
                 .buttonStyle(.plain)
                 Spacer()
-                Button("Done") {
+                Button("Add project") {
                     
                     let project = Project(context: context)
                     project.name = projectName
                     project.priority = projectPriority.rawValue
                     project.status = projectStatus.rawValue
+                    selectedProject.project = project
                     
                     do {
                         try context.save()

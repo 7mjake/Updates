@@ -14,21 +14,21 @@ struct ProjectRow: View {
     @Environment(\.managedObjectContext) private var context: NSManagedObjectContext
     
     private func activeTaskCount(for project: Project, on date: Date) -> Int {
-           let request: NSFetchRequest<Task> = Task.fetchRequest()
-           
-           // Set the predicate.
+        let request: NSFetchRequest<Task> = Task.fetchRequest()
+        
+        // Set the predicate.
         let predicate = NSPredicate(format: "project == %@ && complete == false", project)
-           request.predicate = predicate
-           
-           do {
-               // Get the count for the tasks in the project on the selected date.
-               let count = try context.count(for: request)
-               return count
-           } catch {
-               print("Error fetching task count: \(error)")
-               return 0
-           }
-       }
+        request.predicate = predicate
+        
+        do {
+            // Get the count for the tasks in the project on the selected date.
+            let count = try context.count(for: request)
+            return count
+        } catch {
+            print("Error fetching task count: \(error)")
+            return 0
+        }
+    }
     
     var body: some View {
         HStack(alignment: .center, spacing: 4) {
@@ -46,19 +46,19 @@ struct ProjectRow: View {
             
             Spacer()
             
-//            Text("P" + String(project.priority))
+            //            Text("P" + String(project.priority))
             if taskCount > 0 {
                 Text(String(taskCount))
                     .fontWeight(.bold)
                     .foregroundColor(isProjectSelected ? Color.white : Color.clear)
                     .scaleEffect(isProjectSelected ? 1.0 : 0.1)
-                .frame(width: isProjectSelected ? 24.0 : 12.0, height: isProjectSelected ? 24.0 : 12.0)
-                .background(
-                    Circle()
-                        .fill(Color.accentColor)
-                )
-                .padding(isProjectSelected ? 0.0 : 6.0)
-                .animation(.easeInOut(duration: 0.15), value: isProjectSelected)
+                    .frame(width: isProjectSelected ? 24.0 : 12.0, height: isProjectSelected ? 24.0 : 12.0)
+                    .background(
+                        Circle()
+                            .fill(Color.accentColor)
+                    )
+                    .padding(isProjectSelected ? 0.0 : 6.0)
+                    .animation(.easeInOut(duration: 0.15), value: isProjectSelected)
             }
         }
     }
@@ -66,11 +66,19 @@ struct ProjectRow: View {
 
 struct ProjectMenu: View {
     
+    @EnvironmentObject var selectedProject: SelectedProject
     var project: Project
     let editHandler: () -> Void
     @Environment(\.managedObjectContext) private var context: NSManagedObjectContext
     
-    
+    @FetchRequest(
+        sortDescriptors: [
+            SortDescriptor(\Project.status),
+            SortDescriptor(\Project.priority),
+            SortDescriptor(\Project.name)
+        ],
+        predicate: nil
+    ) private var allProjects: FetchedResults<Project>
     
     var body: some View {
         Button("􀈊 Edit project") {
@@ -78,16 +86,24 @@ struct ProjectMenu: View {
         }
         
         Button("􀈑 Delete project") {
+            
             context.delete(project)
+            
             do {
                 try context.save()
             } catch {
-                // handle the Core Data error
                 print("Failed to delete project: \(error)")
+            }
+            if allProjects.count >= 1  && project == selectedProject.project {
+                selectedProject.project = allProjects[0]
+            } else if allProjects.count == 0 {
+                selectedProject.project = nil
+                print("no more projects")
             }
         }
     }
 }
+
 
 struct ProjectsView: View {
     
@@ -134,7 +150,7 @@ struct ProjectsView: View {
             }
             .sheet(item: $projectForEdit) { project in
                 EditProjectView(project: project)
-                            .frame(minWidth: 300.0, minHeight: 300.0)
+                    .frame(minWidth: 300.0, minHeight: 300.0)
             }
         }
         
@@ -145,20 +161,19 @@ struct ProjectsView: View {
                 selectedProject.project = firstProject
             }
         }
-
+        
         
         Button("Add a project") {
             isAddProjectViewPresented = true
         }
-        
         .padding(.bottom, 16.0)
         .sheet(isPresented: $isAddProjectViewPresented) {
             AddProjectView()
                 .frame(minWidth: 300.0, minHeight: 300.0)
         }
     }
-
-
+    
+    
 }
 
 struct ProjectsView_Previews: PreviewProvider {

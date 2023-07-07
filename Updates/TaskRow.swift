@@ -32,7 +32,6 @@ struct TaskRow: View {
         // Get the start of the day for the date argument
         let startOfDay = Calendar.current.startOfDay(for: selectedDate.date)
         
-        // This predicate assumes 'date' is a Date type and 'task' is a relationship to the Task entity
         let predicate = NSPredicate(format: "date == %@ AND task == %@", startOfDay as NSDate, task)
         
         fetchRequest.predicate = predicate
