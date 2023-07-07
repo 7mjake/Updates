@@ -13,13 +13,12 @@ struct DatePickerView: View {
     
     @EnvironmentObject var selectedDate: SelectedDate
     @ObservedObject var task: Task
-    @Binding var hovering: Bool
-    @State private var isDueDatePickerPresented = false
+    @Binding var isTaskFocused: Bool
+    @Binding var isDueDatePickerPresented: Bool
     @State private var tempDueDate = Date()
     @State private var isDatePicked = false
     @State var newTaskDueDate = Date()
     @State var buttonText = "􀉊"
-    //@State private var hasDueDate = task.dueDate != nil
     
     var dateFormatter = Self.makeDateFormatter()
     static func makeDateFormatter() -> DateFormatter {
@@ -32,7 +31,7 @@ struct DatePickerView: View {
     
     var body: some View {
         
-        if hovering || isDueDatePickerPresented || task.dueDate != nil {
+        if isTaskFocused || isDueDatePickerPresented || task.dueDate != nil {
             Button(action: {
                 isDueDatePickerPresented.toggle()
             }, label: {
@@ -42,7 +41,7 @@ struct DatePickerView: View {
             })
             .onAppear {
                 if task.dueDate != nil {
-                    buttonText = dateFormatter.string(from: task.dueDate!)
+                    buttonText = "Due \(dateFormatter.string(from: task.dueDate!))"
                 }
             }
             .buttonStyle(.plain)
@@ -56,7 +55,7 @@ struct DatePickerView: View {
                 .padding(EdgeInsets(top: 24, leading: 16, bottom: 8, trailing: 24))
                 .onChange(of: tempDueDate) { newContent in
                     
-                    buttonText = dateFormatter.string(from: newContent)
+                    buttonText = "Due \(dateFormatter.string(from: newContent))"
                     
                 }
                 

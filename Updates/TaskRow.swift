@@ -19,10 +19,13 @@ struct TaskRow: View {
     @FocusState private var isUpdateFocused: Bool
     @State private var currentTask = ""
     @FocusState var isTaskFocused: Bool
+    @State var taskFocused = Bool()
     @Binding var isGlobalTaskFocused: Bool
     @State private var hover = false
     @State private var isTaskMenuPresented = false
     @Binding var justCreatedTask: Task?
+    @State private var isDueDatePickerPresented = false
+
 
     
     // Do some reading about automatically generated initilizers for classes and structs
@@ -89,102 +92,114 @@ struct TaskRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             
-            HStack {
                 // GPT using combine debounce to save
                 //Task checkbox
-                Toggle(isOn: $taskChecked, label: {
-                    TextField("Task name", text: $currentTask)
-                        .onSubmit {
-                            isTaskFocused = false
-                        }
-                        .textFieldStyle(PlainTextFieldStyle())
-                        .focused($isTaskFocused)
-                        .fontWeight(.heavy)
-                        .foregroundStyle(isTaskFocused ? .secondary : .primary)
-                        .fixedSize()
-                        .onAppear {
-                            currentTask = task.name ?? "no task name found"
-                            if task == justCreatedTask {
-                                isTaskFocused = true
-                            }
-                        }
-                        .onChange(of: selectedDate.date) { _ in
-                                isTaskFocused = false
-                        }
-                        .onChange(of: isTaskFocused) { _ in
-                            
-                            if isTaskFocused == true && isGlobalTaskFocused == false {
-                                isGlobalTaskFocused = true
-                            }
-                            
-                            if isTaskFocused == false && currentTask.isEmpty {
-                                context.delete(task)
-                                do {
-                                    try context.save()
-                                } catch {
-                                    // handle the Core Data error
-                                    print("Failed to delete task: \(error)")
-                                }
-                            }
-                            
-                        }
-                        .onChange(of: isGlobalTaskFocused) { _ in
-                            if isGlobalTaskFocused == false && isTaskFocused == true {
-                                isTaskFocused = false
-                            }
-                        }
-                        .onChange(of: currentTask) { newValue in
-                            
-                            task.name = currentTask
-                            
-                            do {
-                                print("task name saved")
-                                try context.save()
-                            } catch {
-                                print("Failed to save task name: \(error)")
-                            }
-                        }
-                })
-                .disabled(task.complete)
-                .onChange(of: taskChecked) { newValue in
-                    
-                    let update = fetchExistingUpdate(for: task)
-                    if newValue == false && fetchExistingUpdate(for: task) != nil{
-                        context.delete(update!)
-                        print("update deleted")
+            HStack(alignment: .top, spacing: 8.0) {
+                    Toggle(isOn: $taskChecked, label: {})
+                    .padding(1.0)
+                    .disabled(task.complete)
+                    .onChange(of: taskChecked) { newValue in
                         
-                        do {
-                            try context.save()
-                        } catch {
-                            // handle the Core Data error
-                            print("Failed to delete update: \(error)")
-                        }
-                    }
-                }
-                
-
-                DatePickerView(task: task, hovering: $hover)
-                
-                if hover {
-                    
-                    Menu("") {
-                        
-                        Button("􀈑 Delete task", action: {
-                            context.delete(task)
+                        let update = fetchExistingUpdate(for: task)
+                        if newValue == false && fetchExistingUpdate(for: task) != nil{
+                            context.delete(update!)
+                            print("update deleted")
+                            
                             do {
                                 try context.save()
                             } catch {
                                 // handle the Core Data error
-                                print("Failed to delete task: \(error)")
+                                print("Failed to delete update: \(error)")
                             }
-                        })
-                        
-                        Text(task.dateAdded != nil ? "􀉉 Added on \(dateFormatter.string(from: task.dateAdded!))" : "No dateAdded found")
-                        
+                        }
                     }
-                    .menuStyle(.borderlessButton)
-                    .fixedSize()
+                    
+                    VStack(spacing: 4.0) {
+                        TextField("Task name", text: $currentTask, axis: .vertical)
+                            .onSubmit {
+                                isTaskFocused = false
+                            }
+                            .textFieldStyle(PlainTextFieldStyle())
+                            .focused($isTaskFocused)
+                            .fontWeight(.bold)
+                            .foregroundStyle(isTaskFocused ? .secondary : .primary)
+                            .onAppear {
+                                currentTask = task.name ?? "no task name found"
+                                if task == justCreatedTask {
+                                    isTaskFocused = true
+                                }
+                            }
+                            .onChange(of: selectedDate.date) { _ in
+                                    isTaskFocused = false
+                            }
+                            .onChange(of: isTaskFocused) { _ in
+                                
+                                taskFocused = isTaskFocused
+                                
+                                if isTaskFocused == true && isGlobalTaskFocused == false {
+                                    isGlobalTaskFocused = true
+                                }
+                                
+                                if isTaskFocused == false && currentTask.isEmpty {
+                                    context.delete(task)
+                                    do {
+                                        try context.save()
+                                    } catch {
+                                        // handle the Core Data error
+                                        print("Failed to delete task: \(error)")
+                                    }
+                                }
+                                
+                            }
+                            .onChange(of: isGlobalTaskFocused) { _ in
+                                if isGlobalTaskFocused == false && isTaskFocused == true {
+                                    isTaskFocused = false
+                                }
+                            }
+                            .onChange(of: currentTask) { newValue in
+                                
+                                task.name = currentTask
+                                
+                                do {
+                                    print("task name saved")
+                                    try context.save()
+                                } catch {
+                                    print("Failed to save task name: \(error)")
+                                }
+                            }
+                        
+                        if isTaskFocused || task.dueDate != nil || isDueDatePickerPresented{
+                            HStack {
+                                DatePickerView(task: task, isTaskFocused: $taskFocused, isDueDatePickerPresented: $isDueDatePickerPresented)
+                                
+                                if isTaskFocused {
+                                    
+                                    Menu("") {
+                                        
+                                        Button("􀈑 Delete task", action: {
+                                            context.delete(task)
+                                            do {
+                                                try context.save()
+                                            } catch {
+                                                // handle the Core Data error
+                                                print("Failed to delete task: \(error)")
+                                            }
+                                        })
+                                        
+                                        Text(task.dateAdded != nil ? "􀉉 Added on \(dateFormatter.string(from: task.dateAdded!))" : "No dateAdded found")
+                                        
+                                    }
+                                    .menuStyle(.borderlessButton)
+                                    .fixedSize()
+                                }
+                                
+                                Spacer()
+                            }
+                        }
                 }
+                
+
+                
                 
                 
                 
@@ -232,6 +247,7 @@ struct TaskRow: View {
             if taskChecked {
                 
                 TextField("Task Update", text: $updateContent, prompt: Text("Add an update"), axis: .vertical)
+                    .foregroundStyle(.secondary)
                     .frame(maxWidth: 400.0)
                     .focused($isUpdateFocused)
                     .onAppear {
@@ -275,7 +291,7 @@ struct TaskRow: View {
                     }
                 //.disabled(task.complete)
                     .textFieldStyle(PlainTextFieldStyle())
-                    .padding(.leading, 20.0)
+                    .padding(.leading, 24.0)
                 
                 
             }

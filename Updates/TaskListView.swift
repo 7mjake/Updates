@@ -56,10 +56,7 @@ struct TaskListView: View {
             
             
             ForEach(filteredTasks) { task in
-                // pass in should be selected if task is the currently selected task
                 TaskRow(task: task, isGlobalTaskFocused: $isGlobalTaskFocused, justCreatedTask: $justCreatedTask)
-                
-                // You need to at some point nil out the value of the currently selected task
             }
             
             Spacer(minLength: 5.0)
@@ -81,7 +78,7 @@ struct TaskListView: View {
                     }
                 }
                 .buttonStyle(.link)
-                .padding(.leading, 8)
+                .padding(.leading, 32)
             
         }
         
